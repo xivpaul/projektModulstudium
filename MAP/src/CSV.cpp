@@ -6,8 +6,25 @@
 #include <string>
 #include <vector>
 
+#include <ctime>
+#include <iomanip>
+
 void CSV::read(std::string path) {
   nRows = 0;
+
+  std::vector<std::string> metadata;
+
+  metadata.push_back(path);
+
+  time_t rawtime;
+  struct tm *timeinfo;
+  char buffer[80];
+  time(&rawtime);
+  timeinfo = localtime(&rawtime);
+  strftime(buffer, sizeof(buffer), "%d-%m-%Y %H:%M:%S", timeinfo);
+  std::string str(buffer);
+  metadata.push_back(str);
+
   std::ifstream csv_file(path);
 
   std::string line;

@@ -11,7 +11,7 @@ set(SOURCES
     src/main.cpp
     src/mongoose.c    
     src/Server.cpp
-    src/Value.cpp    
+    src/Value.cpp
 )
 
 # Add an executable with the above sources
@@ -23,6 +23,5 @@ target_include_directories(map
     PRIVATE 
         ${PROJECT_SOURCE_DIR}/include
 )
-
 
 target_link_libraries(map ws2_32)
