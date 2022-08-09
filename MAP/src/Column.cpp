@@ -2,54 +2,48 @@
 
 #include <cmath>
 
-Column::Column() {
-    name = "UNKNOWN";
-};
+Column::Column() { name = "UNKNOWN"; };
 
-Column::Column(std::string _name) {
-    name = _name;
-}
+Column::Column(std::string _name) { name = _name; }
 
-bool Column::isType(CSVType type) {
-    for (CSVValue value: values) {
-        if (value.type != type) {
-            return false;
-        }
+bool Column::isType(Type type) {
+  for (Value value : values) {
+    if (value.type != type) {
+      return false;
     }
+  }
 
-    return true;
+  return true;
 }
 
 double Column::sum() {
-    if (!isType(NUMBER)) {
-        return NAN;
-    }
+  if (!isType(NUMBER)) {
+    return NAN;
+  }
 
-    double sum = 0.0;
-    for (CSVValue value: values) {
-        sum += value.numberValue;
-    }
-    return sum;
+  double sum = 0.0;
+  for (Value value : values) {
+    sum += value.numberValue;
+  }
+  return sum;
 }
 
-double Column::mean() {
-    return sum() / values.size();
-}
+double Column::mean() { return sum() / values.size(); }
 
 std::string Column::toString() {
-    std::string result = "[";
-    
-    bool first = true;
+  std::string result = "[";
 
-    for (CSVValue value: values) {
-        if (!first) {
-            result = result + ",";
-        }
-        result = result + value.toString();
-        first = false; 
+  bool first = true;
+
+  for (Value value : values) {
+    if (!first) {
+      result = result + ",";
     }
+    result = result + value.toString();
+    first = false;
+  }
 
-    result = result + "]";
+  result = result + "]";
 
-    return result;
+  return result;
 }
