@@ -17,6 +17,7 @@ set(SOURCES
 # Add an executable with the above sources
 add_executable(map ${SOURCES})
 
+
 # Set the directories that should be included in the build command for this target
 # when running g++ these will be included as -I/directory/path/
 target_include_directories(map
@@ -24,4 +25,4 @@ target_include_directories(map
         ${PROJECT_SOURCE_DIR}/include
 )
 
-target_link_libraries(map ws2_32)
+target_link_libraries(map ws2_32 )
