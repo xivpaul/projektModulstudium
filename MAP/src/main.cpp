@@ -3,4 +3,9 @@
 
 #include "Server.hpp"
 
-int main(int argc, char **argv) { Server::getInstance()->start(); }
+int main(int argc, char **argv) {
+
+  Server::getInstance()->start();
+
+  // std::cout << getMetadata();
+}
