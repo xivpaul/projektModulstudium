@@ -7,8 +7,8 @@
 
 #include "CSV.hpp"
 
-const std::string WEB_ROOT = "web_root";
-const std::string DB_DIR = "db/";
+const std::string WEB_ROOT = "../web_root";
+const std::string DB_DIR = "../db/";
 
 Server::Server() {
     
