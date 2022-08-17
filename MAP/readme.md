@@ -14,8 +14,7 @@ Das Programm laeuft aktuell in der IDE von Fabian Steger. Beim Öffnen bitte "MA
 ```
 PS ...\build> ."C:/cpp_ide/timestamp_extractor/build/timestamp_extractor.exe"
 ```
-Nach Ausführung des Programms startet den Server auf dem [localhost:8000](http://localhost:8000). 
-Leider gibt es noch Probleme mit mongoose, sodass nicht der volle Funktionsumfang von David Spielers Programm vorhanden ist.
+Nach Ausführung des Programms startet den Server auf dem [localhost:8000](http://localhost:8000).
 
 Diese Anleitung soll bitte stets erweitert und aktualisiert werden. Für die "schöne" Ansicht bitte 
 <p align="center">

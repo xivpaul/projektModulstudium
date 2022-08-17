@@ -12,6 +12,8 @@ set(SOURCES
     src/mongoose.c    
     src/Server.cpp
     src/Value.cpp
+    src/Visualization.cpp
+    src/ScatterPlot.cpp
 )
 
 # Add an executable with the above sources
