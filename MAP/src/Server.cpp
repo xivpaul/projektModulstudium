@@ -4,6 +4,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 #include "CSV.hpp"
 #include "ScatterPlot.hpp"
@@ -46,8 +47,8 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
 
         /* ignore filename and just replace data.csv as long as we have no file
          * list */
-        Server::getInstance()->handleCSVFileUpload(data, filename);
         Server::getInstance()->chosen_file = filename;
+        Server::getInstance()->handleCSVFileUpload(data);
       }
 
       std::string redirection =
@@ -69,6 +70,7 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
         // std::string filename = filename_server.substr(0, (int)part.body.len);
         Server::getInstance()->chosen_file =
             filename_server.substr(0, (int)part.body.len);
+        CSV::getColumnNames();
         // std::cout << filename << std::endl;
       }
     } else {
@@ -78,16 +80,15 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
   }
 }
 
-void Server::handleCSVFileUpload(std::string data, std::string filename) {
-  std::ofstream outfile(DB_DIR + filename);
+void Server::handleCSVFileUpload(std::string data) {
+  std::ofstream outfile(DB_DIR + Server::getInstance()->chosen_file);
   outfile << data;
   outfile.close();
 }
 
 std::string Server::handleAnalysisRequest() {
   CSV csv;
-
-  csv.read(DB_DIR + "data.csv");
+  csv.read(DB_DIR + Server::getInstance()->chosen_file);
   double result = csv.columns[0].mean();
 
   return "Ergebnis der Analyse: \nMittelwert der Spalte 0 = " +

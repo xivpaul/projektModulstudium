@@ -4,7 +4,6 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <vector>
 
 #include <ctime>
 #include <iomanip>
@@ -97,4 +96,16 @@ void CSV::print() {
     }
     std::cout << std::endl;
   }
+}
+
+std::vector<std::string> CSV::getColumnNames() {
+  std::vector<std::string> columnNames;
+  for (int i = 0; i < 4; i++) {
+    columnNames[i] = Column::name();
+    columnNames.push_back();
+  }
+  for (Column column : columns) {
+    std::cout << columnNames[column] << std::endl;
+  }
+  return columnNames;
 }

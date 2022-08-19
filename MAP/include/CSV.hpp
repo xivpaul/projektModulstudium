@@ -17,4 +17,5 @@ public:
   int nRows = 0;
 
   void print();
+  std::vector<std::string> getColumnNames();
 };
