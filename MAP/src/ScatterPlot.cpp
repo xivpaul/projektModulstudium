@@ -3,8 +3,9 @@
 
 ScatterPlot::ScatterPlot() {}
 
-std::string ScatterPlot::plot(std::string DB_DIR_Input) {
-  compute(DB_DIR_Input);
+std::string ScatterPlot::plot(std::string DB_DIR_Input,
+                              std::string chosen_file) {
+  compute(DB_DIR_Input, chosen_file);
 
   std::string visualizationHttp =
       "<head><script src='plotly-2.12.1.min.js'></script> \
@@ -19,7 +20,8 @@ std::string ScatterPlot::plot(std::string DB_DIR_Input) {
                                         }; \
                                         var data = [trace1]; \
                                         var layout = {\
-                                         title:'Line and Scatter Plot', \
+                                          title: ' " +
+      chosen_file + "', \
                                          xaxis: {\
                                           title: 'x-axis title'},\
                                          yaxis: {\

@@ -11,5 +11,5 @@ public:
   std::string xColumn;
   std::string yColumn;
   void save(std::string path);
-  void compute(std::string DB_DIR_Input);
+  void compute(std::string DB_DIR_Input, std::string chosen_file);
 };
