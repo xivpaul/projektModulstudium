@@ -9,22 +9,30 @@
 #include <ctime>
 #include <iomanip>
 
-void CSV::read(std::string path) {
-  nRows = 0;
+void CSV::getMetadata(std::string path) {
 
+  // Create metadata
   std::vector<std::string> metadata;
 
   metadata.push_back(path);
+  std::cout << "Hier? " << metadata[0] << std::endl;
 
+  /*
   time_t rawtime;
   struct tm *timeinfo;
   char buffer[80];
   time(&rawtime);
   timeinfo = localtime(&rawtime);
   strftime(buffer, sizeof(buffer), "%d-%m-%Y %H:%M:%S", timeinfo);
-  std::string str(buffer);
-  metadata.push_back(str);
+  std::string timestamp(buffer);
+  metadata.push_back(timestamp);
+  */
+}
 
+void CSV::read(std::string path) {
+  nRows = 0;
+
+  // Read CSV file
   std::ifstream csv_file(path);
 
   std::string line;
@@ -55,6 +63,7 @@ void CSV::read(std::string path) {
           }
         }
 
+        // Create columns and Column
         for (Value cValue : parsed) {
           if (allStrings) {
             columns.push_back(Column(cValue.stringValue));
@@ -86,7 +95,7 @@ void CSV::print() {
   std::cout << std::endl;
 
   for (int row; row < nRows; row++) {
-    std::cout << "| ";
+    std::cout << "  ";
     for (Column column : columns) {
       if (column.values[row].type == NUMBER) {
         std::cout << column.values[row].numberValue;

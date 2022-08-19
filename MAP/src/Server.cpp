@@ -54,6 +54,9 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
           "URL=/\"></head><body>Upload erfolgreich! Sie werden gleich wieder "
           "zur Hauptseite gebracht.</body>";
       mg_http_reply(c, 303, "", redirection.c_str());
+    } else if (mg_http_match_uri(hm, "/metadata")) {
+      std::string result = Server::getInstance()->handleMetadataRequest();
+      mg_http_reply(c, 200, "", result.c_str());
     } else if (mg_http_match_uri(hm, "/analyse")) {
       std::string result = Server::getInstance()->handleAnalysisRequest();
       mg_http_reply(c, 200, "", result.c_str());
@@ -71,6 +74,20 @@ void Server::handleCSVFileUpload(std::string data) {
   std::ofstream outfile(DB_DIR + "data.csv");
   outfile << data;
   outfile.close();
+}
+
+std::string Server::handleMetadataRequest() {
+  CSV csv;
+
+  std::cout << "test" << std::endl;
+  csv.getMetadata(DB_DIR + "data.csv");
+
+  // csv.metadata
+  // csv.print();
+
+  // return "Pfad: " + csv.metadata[0] + " Datum: " + csv.metadata[1];
+  // std::string ret = csv.metadata[0];
+  return csv.metadata[0];
 }
 
 std::string Server::handleAnalysisRequest() {
