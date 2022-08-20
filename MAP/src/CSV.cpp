@@ -11,10 +11,10 @@
 
 void CSV::getMetadata(std::string path) {
 
-  // Create metadata
+  // Create metadata path
   metadata.push_back(path);
-  // std::cout << "Hier? " << metadata[0] << std::endl;
 
+  // Create metadata time
   time_t rawtime;
   struct tm *timeinfo;
   char buffer[80];
