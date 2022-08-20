@@ -100,7 +100,9 @@ std::string Server::handleStartPageRequest() {
     // std::cout << dir_entry.path().filename() << '\n';
   }
 
-  std::string OPTIONSLISTE;
+  
+
+  std::string OPTIONSLISTE = "<option value=\" - \"> - </option>";
   for (std::string file : data_vector) {
     OPTIONSLISTE += ("<option value=" + file + ">" + file + "</option>");
   }
@@ -109,6 +111,11 @@ std::string Server::handleStartPageRequest() {
   httpStartPageString = buffer.str();
   httpStartPageString = std::regex_replace(
       httpStartPageString, std::regex("OPTIONSLISTE"), OPTIONSLISTE);
+  httpStartPageString = std::regex_replace(
+      httpStartPageString, std::regex("USERTEXT"),
+      "GewÃ¤hlte Messreihe " + Server::getInstance()->chosen_file);
+
+
 
   return httpStartPageString;
 }
