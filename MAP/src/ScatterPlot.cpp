@@ -28,6 +28,7 @@ std::string ScatterPlot::plot(std::string DB_DIR_Input,
                                           title: 'y-axis title'}\
                                         }; \
                                         Plotly.newPlot('myDiv', data, layout); \
-                                    </script>";
+                                    </script>\
+                                    <button onclick=\"history.back()\">Go Back</button>";
   return visualizationHttp;
 }
