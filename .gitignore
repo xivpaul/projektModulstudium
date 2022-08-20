@@ -1,3 +1,5 @@
 */build/*
 *.DS_Store
 /mingw64/*
+/MAP/db/*
+/MAP/.vscode/*
