@@ -55,9 +55,9 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
           "URL=/\"></head><body>Upload erfolgreich! Sie werden gleich wieder "
           "zur Hauptseite gebracht.</body>";
       mg_http_reply(c, 303, "", redirection.c_str());
-    } else if (mg_http_match_uri(hm, "/metadata")) {
-      std::string result = Server::getInstance()->handleMetadataRequest();
-      mg_http_reply(c, 200, "", result.c_str());
+      //} else if (mg_http_match_uri(hm, "/metadata")) {
+      //  std::string result = Server::getInstance()->handleMetadataRequest();
+      //  mg_http_reply(c, 200, "", result.c_str());
     } else if (mg_http_match_uri(hm, "/analyse")) {
       std::string result = Server::getInstance()->handleAnalysisRequest();
       mg_http_reply(c, 200, "", result.c_str());
@@ -85,20 +85,31 @@ void Server::handleCSVFileUpload(std::string data, std::string filename) {
   std::ofstream outfile(DB_DIR + filename);
   outfile << data;
   outfile.close();
+
+  Server::createMetadata(filename);
 }
 
-std::string Server::handleMetadataRequest() {
+void Server::createMetadata(std::string m_filename) {
   CSV csv;
 
-  std::cout << "test" << std::endl;
-  csv.getMetadata(DB_DIR + "data.csv");
+  csv.setMetadata(DB_DIR + m_filename);
+
+  std::ofstream outfile(DB_DIR + m_filename + "meta");
+  outfile << "Pfad: " + csv.metadata[0] + "\n";
+  outfile << "Format: " + csv.metadata[1] + "\n";
+  outfile << "Datum: " + csv.metadata[2];
+  outfile.close();
+}
+
+std::string Server::handleMetadataRequest(std::string m_filename) {
 
   // csv.metadata
   // csv.print();
 
-  return "Pfad: " + csv.metadata[0] + " Datum: " + csv.metadata[1];
+  // return "Pfad: " + csv.metadata[0] + " Datum: " + csv.metadata[1];
   // std::string ret = csv.metadata[0];
   // return csv.metadata[0];
+  return " ";
 }
 
 std::string Server::handleAnalysisRequest() {

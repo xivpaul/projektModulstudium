@@ -9,12 +9,17 @@
 #include <ctime>
 #include <iomanip>
 
-void CSV::getMetadata(std::string path) {
+void CSV::setMetadata(std::string path) {
 
-  // Create metadata path
+  // Create path
   metadata.push_back(path);
 
-  // Create metadata time
+  // Create format
+  std::string format;
+  format = path.substr(path.find_last_of(".") + 1);
+  metadata.push_back(format);
+
+  // Create time
   time_t rawtime;
   struct tm *timeinfo;
   char buffer[80];
