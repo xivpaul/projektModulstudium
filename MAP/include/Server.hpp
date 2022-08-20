@@ -16,8 +16,8 @@ public:
   void operator=(const Server &) = delete; // C++11 prevent assignments
 
   void handleCSVFileUpload(std::string data);
-  void createMetadata(std::string m_filename);
-  std::string handleMetadataRequest(std::string m_filename);
+  void createMetadata();
+  std::string handleMetadataRequest();
   std::string handleAnalysisRequest();
   std::string handleVisualizationRequest();
   std::string handleStartPageRequest();
