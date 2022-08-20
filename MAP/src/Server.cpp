@@ -46,7 +46,8 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
 
         /* ignore filename and just replace data.csv as long as we have no file
          * list */
-        Server::getInstance()->handleCSVFileUpload(data);
+        Server::getInstance()->handleCSVFileUpload(data, filename);
+        Server::getInstance()->chosen_file = filename;
       }
 
       std::string redirection =
@@ -63,6 +64,16 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
     } else if (mg_http_match_uri(hm, "/visualize")) {
       std::string result = Server::getInstance()->handleVisualizationRequest();
       mg_http_reply(c, 200, "", result.c_str());
+    } else if (mg_http_match_uri(hm, "/load")) {
+      struct mg_http_part part;
+      size_t ofs = 0;
+      while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
+        std::string filename_server(part.body.ptr);
+        // std::string filename = filename_server.substr(0, (int)part.body.len);
+        Server::getInstance()->chosen_file =
+            filename_server.substr(0, (int)part.body.len);
+        // std::cout << filename << std::endl;
+      }
     } else {
       struct mg_http_serve_opts opts = {.root_dir = WEB_ROOT.c_str()};
       mg_http_serve_dir(c, (struct mg_http_message *)ev_data, &opts);
@@ -70,8 +81,8 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
   }
 }
 
-void Server::handleCSVFileUpload(std::string data) {
-  std::ofstream outfile(DB_DIR + "data.csv");
+void Server::handleCSVFileUpload(std::string data, std::string filename) {
+  std::ofstream outfile(DB_DIR + filename);
   outfile << data;
   outfile.close();
 }
@@ -101,7 +112,7 @@ std::string Server::handleAnalysisRequest() {
 }
 
 std::string Server::handleVisualizationRequest() {
-  return scattplot.plot(DB_DIR);
+  return scattplot.plot(DB_DIR, Server::getInstance()->chosen_file);
 }
 
 void Server::start() {
