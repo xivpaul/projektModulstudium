@@ -12,12 +12,9 @@
 void CSV::getMetadata(std::string path) {
 
   // Create metadata
-  std::vector<std::string> metadata;
-
   metadata.push_back(path);
-  std::cout << "Hier? " << metadata[0] << std::endl;
+  // std::cout << "Hier? " << metadata[0] << std::endl;
 
-  /*
   time_t rawtime;
   struct tm *timeinfo;
   char buffer[80];
@@ -26,7 +23,6 @@ void CSV::getMetadata(std::string path) {
   strftime(buffer, sizeof(buffer), "%d-%m-%Y %H:%M:%S", timeinfo);
   std::string timestamp(buffer);
   metadata.push_back(timestamp);
-  */
 }
 
 void CSV::read(std::string path) {

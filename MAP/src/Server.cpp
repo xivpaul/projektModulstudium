@@ -85,9 +85,9 @@ std::string Server::handleMetadataRequest() {
   // csv.metadata
   // csv.print();
 
-  // return "Pfad: " + csv.metadata[0] + " Datum: " + csv.metadata[1];
+  return "Pfad: " + csv.metadata[0] + " Datum: " + csv.metadata[1];
   // std::string ret = csv.metadata[0];
-  return csv.metadata[0];
+  // return csv.metadata[0];
 }
 
 std::string Server::handleAnalysisRequest() {
