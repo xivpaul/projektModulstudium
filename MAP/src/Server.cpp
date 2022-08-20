@@ -1,13 +1,12 @@
 #include "Server.hpp"
-
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-
 #include "CSV.hpp"
 #include "ScatterPlot.hpp"
 #include "Visualization.hpp"
+#include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <regex>
+#include <sstream>
 
 const std::string WEB_ROOT = "../web_root";
 const std::string DB_DIR = "../db/";
@@ -55,14 +54,14 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
           "URL=/\"></head><body>Upload erfolgreich! Sie werden gleich wieder "
           "zur Hauptseite gebracht.</body>";
       mg_http_reply(c, 303, "", redirection.c_str());
-    } else if (mg_http_match_uri(hm, "/metadata")) {
-      std::string result = Server::getInstance()->handleMetadataRequest();
-      mg_http_reply(c, 200, "", result.c_str());
     } else if (mg_http_match_uri(hm, "/analyse")) {
       std::string result = Server::getInstance()->handleAnalysisRequest();
       mg_http_reply(c, 200, "", result.c_str());
     } else if (mg_http_match_uri(hm, "/visualize")) {
       std::string result = Server::getInstance()->handleVisualizationRequest();
+      mg_http_reply(c, 200, "", result.c_str());
+    } else if (mg_http_match_uri(hm, "/")) {
+      std::string result = Server::getInstance()->handleStartPageRequest();
       mg_http_reply(c, 200, "", result.c_str());
     } else if (mg_http_match_uri(hm, "/load")) {
       struct mg_http_part part;
@@ -81,24 +80,40 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
   }
 }
 
+std::string Server::handleStartPageRequest() {
+  std::string httpStartPageString;
+  std::ifstream inFile(WEB_ROOT + "/index.html");
+  std::stringstream buffer;
+  buffer << inFile.rdbuf();
+  std::vector<std::string> data_vector;
+  const std::filesystem::path database_path{DB_DIR};
+
+  std::cout << "directory_iterator:\n";
+  // directory_iterator can be iterated using a range-for loop
+  for (auto const &dir_entry :
+       std::filesystem::directory_iterator{database_path}) {
+    std::string filename = dir_entry.path().filename().string();
+    data_vector.push_back(filename);
+    // std::cout << dir_entry.path().filename() << '\n';
+  }
+
+  std::string OPTIONSLISTE;
+  for (std::string file : data_vector) {
+    OPTIONSLISTE += ("<option value=" + file + ">" + file + "</option>");
+  }
+  // Quelle:
+  // https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
+  httpStartPageString = buffer.str();
+  httpStartPageString = std::regex_replace(
+      httpStartPageString, std::regex("OPTIONSLISTE"), OPTIONSLISTE);
+
+  return httpStartPageString;
+}
+
 void Server::handleCSVFileUpload(std::string data, std::string filename) {
   std::ofstream outfile(DB_DIR + filename);
   outfile << data;
   outfile.close();
-}
-
-std::string Server::handleMetadataRequest() {
-  CSV csv;
-
-  std::cout << "test" << std::endl;
-  csv.getMetadata(DB_DIR + "data.csv");
-
-  // csv.metadata
-  // csv.print();
-
-  return "Pfad: " + csv.metadata[0] + " Datum: " + csv.metadata[1];
-  // std::string ret = csv.metadata[0];
-  // return csv.metadata[0];
 }
 
 std::string Server::handleAnalysisRequest() {
