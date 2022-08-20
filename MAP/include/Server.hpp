@@ -11,7 +11,7 @@ private:
 
 public:
   static Server *getInstance();
-  std::string chosen_file;
+  std::string chosen_file = "Keine Datei ausgewaehlt";
   Server(Server &other) = delete;          // C++11 prevent cloning
   void operator=(const Server &) = delete; // C++11 prevent assignments
 

@@ -50,7 +50,7 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
       }
 
       std::string redirection =
-          "<head><meta http-equiv=\"Refresh\" content=\"3; "
+          "<head><meta http-equiv=\"Refresh\" content=\"2; "
           "URL=/\"></head><body>Upload erfolgreich! Sie werden gleich wieder "
           "zur Hauptseite gebracht.</body>";
       mg_http_reply(c, 303, "", redirection.c_str());
@@ -71,11 +71,15 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
       size_t ofs = 0;
       while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
         std::string filename_server(part.body.ptr);
-        // std::string filename = filename_server.substr(0, (int)part.body.len);
         Server::getInstance()->chosen_file =
             filename_server.substr(0, (int)part.body.len);
-        // std::cout << filename << std::endl;
       }
+      // Die HTML wird neu geladen, damit die Aenderungen sichtbar werden:
+      std::string redirection =
+          "<head><meta http-equiv=\"Refresh\" content=\"0; "
+          "URL=/\"></head>";
+
+      mg_http_reply(c, 200, "", redirection.c_str());
     } else {
       struct mg_http_serve_opts opts = {.root_dir = WEB_ROOT.c_str()};
       mg_http_serve_dir(c, (struct mg_http_message *)ev_data, &opts);
@@ -90,19 +94,26 @@ std::string Server::handleStartPageRequest() {
   buffer << inFile.rdbuf();
   std::vector<std::string> data_vector;
   const std::filesystem::path database_path{DB_DIR};
+  auto loaded_file = Server::getInstance()->chosen_file;
 
-  std::cout << "directory_iterator:\n";
   // directory_iterator can be iterated using a range-for loop
   for (auto const &dir_entry :
        std::filesystem::directory_iterator{database_path}) {
     std::string filename = dir_entry.path().filename().string();
-    data_vector.push_back(filename);
-    // std::cout << dir_entry.path().filename() << '\n';
+    if (filename != loaded_file and
+        filename.substr(filename.length() - 3, filename.length()) == "csv") {
+      data_vector.push_back(filename);
+    }
+  }
+  std::string OPTIONSLISTE;
+
+  if (loaded_file.substr(loaded_file.length() - 3, loaded_file.length()) ==
+      "csv") {
+    OPTIONSLISTE =
+        "<option value=" + loaded_file + ">" + loaded_file + "</option>";
   }
 
-  
-
-  std::string OPTIONSLISTE = "<option value=\" - \"> - </option>";
+  // std::string OPTIONSLISTE = "<option value=\" - \"> - </option>";
   for (std::string file : data_vector) {
     OPTIONSLISTE += ("<option value=" + file + ">" + file + "</option>");
   }
@@ -111,11 +122,10 @@ std::string Server::handleStartPageRequest() {
   httpStartPageString = buffer.str();
   httpStartPageString = std::regex_replace(
       httpStartPageString, std::regex("OPTIONSLISTE"), OPTIONSLISTE);
+
   httpStartPageString = std::regex_replace(
       httpStartPageString, std::regex("USERTEXT"),
-      "GewÃ¤hlte Messreihe " + Server::getInstance()->chosen_file);
-
-
+      "Gewaehlte Messreihe: " + Server::getInstance()->chosen_file);
 
   return httpStartPageString;
 }

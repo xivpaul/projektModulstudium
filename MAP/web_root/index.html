@@ -73,13 +73,17 @@
         <h3>Messreihe aus Serverdatenbank waehlen:</h3>
         <form action="/load" method="post" enctype="multipart/form-data">
           <label for="Messreihe">Messreihe waehlen:</label>
-          <select name="Messreihe" id="sel" onchange="func()">
+          <select name="Messreihe" id="id_messreihe">
             OPTIONSLISTE
           </select>
           <input type="submit" value="OK" />
-
+          USERTEXT
         </form>
-        USERTEXT
+
+
+        <!-- Hier wird der Text angezeigt welche Datei gerade geladen ist-->
+
+        <br>
         <a href="/metadata">Metadaten anzeigen</a>
     </div>
     <!-- Bereich Upload Ende -->
@@ -89,17 +93,31 @@
       <div id="analyze">
         <h2>Schritt 2a: Hochgeladene Messdaten analysieren</h2>
         <a href="/analyse">Analyse starten</a>
+        <form action="/load" method="post" enctype="multipart/form-data">
+          <label for="Spaltenwahl">Spalte waehlen:</label>
+          <select name="spalte" id="id_spalte">
+            <option value="Spalte_1">Spalte_1</option>
+            <option value="Spalte_2">Spalte_2</option>
+            <option value="Spalte_3">Spalte_3</option>
+          </select>
+          <input type="submit" value="OK" />
+        </form>
       </div>
-      <!-- Bereich Analyse: -->
+      <!-- Bereich Analyse Ende -->
 
       <!-- Bereich Visualisierung: -->
       <div id="visualize">
         <h2>Schritt 2b: Hochgeladene Messdaten visualisieren</h2>
-        <a href="/visualize">Visualisierung starten</a>
+
+        <form action="/visualize">
+          <button type="submit">Scatterplot erstellen</button>
+          <br>
+          <button type="submit">Lineplot erstellen</button>
+        </form>
       </div>
     </div>
 
-    <!-- Bereich Visualisierung: -->
+    <!-- Bereich Visualisierung Ende -->
   </div>
 </body>
 
