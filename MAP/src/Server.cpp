@@ -45,8 +45,9 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
 
         /* ignore filename and just replace data.csv as long as we have no file
          * list */
-        Server::getInstance()->handleCSVFileUpload(data, filename);
-        Server::getInstance()->chosen_file = filename;
+				Server::getInstance()->chosen_file = filename;
+				Server::getInstance()->handleCSVFileUpload(data);
+
       }
 
       std::string redirection =
@@ -110,16 +111,15 @@ std::string Server::handleStartPageRequest() {
   return httpStartPageString;
 }
 
-void Server::handleCSVFileUpload(std::string data, std::string filename) {
-  std::ofstream outfile(DB_DIR + filename);
+void Server::handleCSVFileUpload(std::string data) {
+  std::ofstream outfile(DB_DIR + Server::getInstance()->chosen_file);
   outfile << data;
   outfile.close();
 }
 
 std::string Server::handleAnalysisRequest() {
   CSV csv;
-
-  csv.read(DB_DIR + "data.csv");
+  csv.read(DB_DIR + Server::getInstance()->chosen_file);
   double result = csv.columns[0].mean();
 
   return "Ergebnis der Analyse: \nMittelwert der Spalte 0 = " +

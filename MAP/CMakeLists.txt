@@ -1,6 +1,7 @@
 # Set the minimum version of CMake that can be used
 cmake_minimum_required(VERSION 3.10)
-
+# C++ Version required to scan file directory
+set(CMAKE_CXX_STANDARD 17)
 # Set the project name
 project (MAP)
 
