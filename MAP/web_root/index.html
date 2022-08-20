@@ -6,6 +6,7 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <style>
     #container {
       margin-right: auto;
@@ -62,18 +63,9 @@
       <h2>Schritt 1: Messdaten hochladen</h2>
       <h3>Neue Datei einlesen:</h2>
         <form action="/upload" method="post" enctype="multipart/form-data">
-          <!--<input type="file" id="file1" multiple onchange="showname()" /><button type="submit">Hochladen</button>-->
           <input type="file" name="file1" />
           <button type="submit">Hochladen</button>
-          <!--
-        <script>
-          function showname() {
-            var name = document.getElementByName('file1');
-            document.getElementById("myText").innerHTML = "Datei eingelesen: " + name.files.item(0).name;
-          };
 
-        </script>
-      -->
         </form>
         <br>
         <hr>
@@ -81,16 +73,12 @@
         <h3>Messreihe aus Serverdatenbank waehlen:</h3>
         <form action="/load" method="post" enctype="multipart/form-data">
           <label for="Messreihe">Messreihe waehlen:</label>
-          <select name="Messreihe" id="Messreihe">
-            <option value="weekly.csv">weekly</option>
-            <option value="weekly_1.csv">weekly_1</option>
-            <option value="weekly_2.csv">weekly_2</option>
-            <option value="weekly_3.csv">weekly_3</option>
+          <select name="Messreihe" id="sel" onchange="func()">
+            OPTIONSLISTE
           </select>
           <input type="submit" value="OK" />
-          <!--  <button type="submit">OK</button>-->
+
         </form>
-        <a href="/metadata">Metadaten anzeigen</a>
     </div>
     <!-- Bereich Upload Ende -->
 
