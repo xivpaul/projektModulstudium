@@ -266,7 +266,13 @@ std::string Server::handleMetadataRequest() {
 }
 
 std::string Server::handleAnalysisRequest() {
-  // CSV csv;
+  if (csv.columns.size() < 1) {
+    std::string redirection = "<head><meta http-equiv=\"Refresh\" content=\"4; "
+                              "URL=/\"></head><body>Bitte Messreihe "
+                              "waehlen! Sie werden gleich wieder "
+                              "zur Hauptseite gebracht.</body>";
+    return redirection;
+  }
   double result = csv.columns[0].mean();
 
   return "Ergebnis der Analyse: \nMittelwert der Spalte 0 = " +
@@ -274,6 +280,13 @@ std::string Server::handleAnalysisRequest() {
 }
 
 std::string Server::handleVisualizationRequest() {
+  if (csv.columns.size() < 1) {
+    std::string redirection = "<head><meta http-equiv=\"Refresh\" content=\"4; "
+                              "URL=/\"></head><body>Bitte Messreihe "
+                              "waehlen! Sie werden gleich wieder "
+                              "zur Hauptseite gebracht.</body>";
+    return redirection;
+  }
   return scattplot.plot(DB_DIR, Server::getInstance()->chosen_file,
                         Server::getInstance()->y_column, csv);
 }

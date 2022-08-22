@@ -10,7 +10,7 @@ private:
   Server();
 
 public:
-  int y_column;
+  int y_column = 0;
   std::string currentHTMLString;
   static Server *getInstance();
   std::string chosen_file = "Keine Datei ausgewaehlt";
