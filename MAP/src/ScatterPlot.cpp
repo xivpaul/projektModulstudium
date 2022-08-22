@@ -1,11 +1,14 @@
 #include "ScatterPlot.hpp"
+// #include <iostream>
 #include <string>
 
 ScatterPlot::ScatterPlot() {}
 
-std::string ScatterPlot::plot(std::string DB_DIR_Input,
-                              std::string chosen_file) {
-  compute(DB_DIR_Input, chosen_file);
+std::string ScatterPlot::plot(std::string DB_DIR_Input, std::string chosen_file,
+                              int y_column, CSV csv) {
+  compute(DB_DIR_Input, chosen_file, y_column);
+  // Scatterplot: mode: 'lines+markers'
+  // Lineplot: mode: 'lines+markers'
 
   std::string visualizationHttp =
       "<head><script src='plotly-2.12.1.min.js'></script> \
@@ -25,7 +28,10 @@ std::string ScatterPlot::plot(std::string DB_DIR_Input,
                                          xaxis: {\
                                           title: 'x-axis title'},\
                                          yaxis: {\
-                                          title: 'y-axis title'}\
+                                          title: '" +
+      csv.columns[y_column].name +
+
+      "'}\
                                         }; \
                                         Plotly.newPlot('myDiv', data, layout); \
                                     </script>\

@@ -77,11 +77,11 @@
             OPTIONSLISTE
           </select>
           <input type="submit" value="OK" />
+          <!-- Hier wird der Text angezeigt welche Datei gerade geladen ist-->
           USERTEXT
+          <!-- -->
         </form>
 
-
-        <!-- Hier wird der Text angezeigt welche Datei gerade geladen ist-->
 
         <br>
         <a href="/metadata">Metadaten anzeigen</a>
@@ -93,12 +93,10 @@
       <div id="analyze">
         <h2>Schritt 2a: Hochgeladene Messdaten analysieren</h2>
         <a href="/analyse">Analyse starten</a>
-        <form action="/load" method="post" enctype="multipart/form-data">
-          <label for="Spaltenwahl">Spalte waehlen:</label>
+        <form action="/setColumn" method="post" enctype="multipart/form-data">
+          <label for="Spaltenwahl">Y-Spalte waehlen:</label>
           <select name="spalte" id="id_spalte">
-            <option value="Spalte_1">Spalte_1</option>
-            <option value="Spalte_2">Spalte_2</option>
-            <option value="Spalte_3">Spalte_3</option>
+            SPALTENAUSWAHL
           </select>
           <input type="submit" value="OK" />
         </form>

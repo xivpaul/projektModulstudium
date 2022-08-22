@@ -7,5 +7,6 @@ class ScatterPlot : public Visualization {
 private:
 public:
   ScatterPlot();
-  std::string plot(std::string DB_DIR_Input, std::string chosen_file);
+  std::string plot(std::string DB_DIR_Input, std::string chosen_file,
+                   int y_column, CSV csv);
 };

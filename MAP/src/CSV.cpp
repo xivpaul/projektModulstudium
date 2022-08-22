@@ -1,14 +1,5 @@
 #include "CSV.hpp"
 
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <string>
-#include <vector>
-
-#include <ctime>
-#include <iomanip>
-
 void CSV::setMetadata(std::string path) {
 
   // Create path
@@ -32,7 +23,8 @@ void CSV::setMetadata(std::string path) {
 
 void CSV::read(std::string path) {
   nRows = 0;
-
+  // Daten zurücksetzen:
+  columns.clear();
   // Read CSV file
   std::ifstream csv_file(path);
 
@@ -45,16 +37,20 @@ void CSV::read(std::string path) {
       std::vector<Value> parsed;
 
       for (std::string token; std::getline(ss, token, ',');) {
-        if (token.size() >= 2 && token[0] == '"' &&
-            token[token.size() - 1] == '"') {
-          token = token.substr(1, token.size() - 2);
-
+        // Hier muss noch überarbeitet werden. Manchmal werden noch "
+        // mitgenommen, was zu Fehlverhalten führt
+        if (token.size() >= 2 && token[0] == '"') {
+          if (token[token.size() - 1] == '"') {
+            token = token.substr(1, token.size() - 2);
+          } else {
+            token = token.substr(1, token.size());
+          }
           parsed.push_back(Value(token));
         } else {
           parsed.push_back(Value(std::stod(token)));
         }
       }
-
+      // Hier muss noch überarbeitet werden
       if (columns.size() == 0) {
         bool allStrings = true;
         for (Value cValue : parsed) {
