@@ -5,9 +5,9 @@
 ScatterPlot::ScatterPlot() {}
 
 /**
- * @brief Die Methode gibt einen HTML String aus, um auf der Weboberfläche
+ * @brief Die Methode gibt einen HTML String aus, um auf der Weboberflaeche
  * die Messdaten zu visualisieren, sowie eine Achsauswahl der X- und Y-Achse
- * vornehmen zu können.
+ * vornehmen zu koennen.
  *
  * @param DB_DIR_Input Datenbankpfad des Servers (entspricht DB_DIR)
  * @param chosen_file Name der ausgewaehlte Messdatei
@@ -16,7 +16,7 @@ ScatterPlot::ScatterPlot() {}
  * @param csv csv - Objekt, welches die Informationen der eingelesenen Messdaten
  * enthaelt
  * @return std::string std::string Es wird ein modifizierter HTML String
- * "httpColumnSetString" zurückgegeben.
+ * "httpColumnSetString" zurueckgegeben.
  */
 std::string ScatterPlot::plot(std::string DB_DIR_Input, std::string chosen_file,
                               int chosen_columns[2], CSV csv) {

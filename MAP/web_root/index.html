@@ -31,7 +31,7 @@
       border-radius: .5em;
       padding: 2em;
       float: left;
-      width: 40%;
+      width: 42%;
     }
 
     #visualize {
@@ -39,7 +39,7 @@
       border-radius: .5em;
       padding: 2em;
       float: right;
-      width: 40%;
+      width: 42%;
     }
 
     #wrapper {
@@ -60,38 +60,39 @@
 
     <!-- Bereich Upload Anfang -->
     <div id="upload">
-      <h2>Schritt 1: Messdaten hochladen</h2>
-      <h3>Neue Datei einlesen:</h2>
-        <form action="/upload" method="post" enctype="multipart/form-data">
-          <input type="file" name="file1" />
-          <button type="submit">Hochladen</button>
+      <h2>Messdaten hochladen</h2>
+      <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file1" />
+        <button type="submit">Hochladen</button>
 
-        </form>
+      </form>
+      <br>
+      <hr>
+      <h2>Messdatei aus Serverdatenbank waehlen</h2>
+      <form action="/load" method="post" enctype="multipart/form-data">
+        <label for="Messdate">Messdatei waehlen:</label>
+        <select name="Messdatei" id="id_messdatei">
+          OPTIONSLISTE
+        </select>
+        <input type="submit" value="OK" />
         <br>
-        <hr>
-        <br>
-        <h3>Messreihe aus Serverdatenbank waehlen:</h3>
-        <form action="/load" method="post" enctype="multipart/form-data">
-          <label for="Messreihe">Messreihe waehlen:</label>
-          <select name="Messreihe" id="id_messreihe">
-            OPTIONSLISTE
-          </select>
-          <input type="submit" value="OK" />
-          <!-- Hier wird der Text angezeigt welche Datei gerade geladen ist-->
-          USERTEXT
-          <!-- -->
-        </form>
+        <!-- Hier wird der Text angezeigt welche Datei gerade geladen ist-->
+        <h3>USERTEXT</h3>
+        <!-- -->
 
+        METADATEN
+      </form>
+      <!-- a href="/metadata">Metadaten anzeigen</a -->
+      <!--h4>Metadaten:</h4 -->
 
-        <br>
-        <a href="/metadata">Metadaten anzeigen</a>
     </div>
     <!-- Bereich Upload Ende -->
 
     <!-- Bereich Analyse: -->
     <div>
       <div id="analyze">
-        <h2>Schritt 2a: Hochgeladene Messdaten analysieren</h2>
+        <h2>Messdatei analysieren</h2>
+        <br>
         <a href="/analyse">Analyse starten</a>
         <!--
         <form action="/setColumn" method="post" enctype="multipart/form-data">
@@ -107,7 +108,7 @@
 
       <!-- Bereich Visualisierung: -->
       <div id="visualize">
-        <h2>Schritt 2b: Hochgeladene Messdaten visualisieren</h2>
+        <h2>Messdatei visualisieren</h2>
 
         <form action="/visualize">
           <button type="submit">Scatterplot erstellen</button>

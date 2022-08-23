@@ -1,7 +1,7 @@
-Es empfiehlt sich zunächst an einem Minimum Viable Product (MVP) zu arbeiten, beispielsweise einem Programm, welches 
-- Messdaten aus einer CSV Datei in den Arbeitsspeicher (zunächst komplett) einliest und 
-- jeweils eine Analyse (z.B. Mittelwertsbildung einer Messgröße) und 
-- eine Visualisierung (z.B. Line-Plot von Messgrößen aus einer gemeinsamen Zeitskala) anbietet (z.B. 
-- über ein Web-Interface oder eine Qt-GUI).  
+Es empfiehlt sich zunaechst an einem Minimum Viable Product (MVP) zu arbeiten, beispielsweise einem Programm, welches 
+- Messdaten aus einer CSV Datei in den Arbeitsspeicher (zunaechst komplett) einliest und 
+- jeweils eine Analyse (z.B. Mittelwertsbildung einer Messgroesse) und 
+- eine Visualisierung (z.B. Line-Plot von Messgroessen aus einer gemeinsamen Zeitskala) anbietet (z.B. 
+- ueber ein Web-Interface oder eine Qt-GUI).  
 
-Dieses MVP könnte in den ersten 1-2 Iterationen/Sprints gebaut werden und sukzessive um Features erweitert werden. 
+Dieses MVP koennte in den ersten 1-2 Iterationen/Sprints gebaut werden und sukzessive um Features erweitert werden. 

@@ -2,13 +2,19 @@
 
 void CSV::setMetadata(std::string path) {
 
+  metadata.push_back(" ");
+  metadata.push_back(" ");
+  metadata.push_back(" ");
+
   // Create path
-  metadata.push_back(path);
+  metadata.at(0) = path;
+  // metadata.push_back(path);
 
   // Create format
   std::string format;
   format = path.substr(path.find_last_of(".") + 1);
-  metadata.push_back(format);
+  // metadata.push_back(format);
+  metadata.at(1) = format;
 
   // Create time
   time_t rawtime;
@@ -18,12 +24,13 @@ void CSV::setMetadata(std::string path) {
   timeinfo = localtime(&rawtime);
   strftime(buffer, sizeof(buffer), "%d-%m-%Y %H:%M:%S", timeinfo);
   std::string timestamp(buffer);
-  metadata.push_back(timestamp);
+  // metadata.push_back(timestamp);
+  metadata.at(2) = timestamp;
 }
 
 void CSV::read(std::string path) {
   nRows = 0;
-  // Daten zurücksetzen:
+  // Daten zuruecksetzen:
   columns.clear();
   // Read CSV file
   std::ifstream csv_file(path);
@@ -37,8 +44,8 @@ void CSV::read(std::string path) {
       std::vector<Value> parsed;
 
       for (std::string token; std::getline(ss, token, ',');) {
-        // Hier muss noch überarbeitet werden. Manchmal werden noch "
-        // mitgenommen, was zu Fehlverhalten führt
+        // Hier muss noch ueberarbeitet werden. Manchmal werden noch "
+        // mitgenommen, was zu Fehlverhalten fuehrt
         if (token.size() >= 2 && token[0] == '"') {
           if (token[token.size() - 1] == '"') {
             token = token.substr(1, token.size() - 2);
@@ -50,7 +57,7 @@ void CSV::read(std::string path) {
           parsed.push_back(Value(std::stod(token)));
         }
       }
-      // Hier muss noch überarbeitet werden
+      // Hier muss noch ueberarbeitet werden
       if (columns.size() == 0) {
         bool allStrings = true;
         for (Value cValue : parsed) {

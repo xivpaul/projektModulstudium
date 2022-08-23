@@ -49,11 +49,11 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
         Server::getInstance()->chosen_file = filename;
         Server::getInstance()->handleCSVFileUpload(data);
       }
-      // Die gewählte Datei wird direkt eingelesen, damit verfuegbare
-      // Spaltennamen angezeigt werden können:
+      // Die gewaehlte Datei wird direkt eingelesen, damit verfuegbare
+      // Spaltennamen angezeigt werden koennen:
       csv.read(DB_DIR + Server::getInstance()->chosen_file);
 
-      // Weboberfläche wird nach 2s neu geladen und aktualisiert:
+      // Weboberflaeche wird nach 2s neu geladen und aktualisiert:
       std::string redirection =
           "<head><meta http-equiv=\"Refresh\" content=\"2; "
           "URL=/\"></head><body>Upload erfolgreich! Sie werden gleich wieder "
@@ -113,10 +113,10 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
 /**
  * @brief Die Methode ermittelt die im Datenbankverzeichnis vorhandenen Dateien
  * und speichert sie in einen Stringvektor. Es wird ein String zur Ausgabe an
- * mongoose zur Erzeugung der Weboberfläche erstellt, in dem die gefundenen
- * Daten im Dropdownmenü ausgewählt werden können.
+ * mongoose zur Erzeugung der Weboberflaeche erstellt, in dem die gefundenen
+ * Daten im Dropdownmenue ausgewaehlt werden koennen.
  *
- * @return std::string HTML String mit Dropdown - Menü zur Ausgabe an mongoose
+ * @return std::string HTML String mit Dropdown - Menue zur Ausgabe an mongoose
  */
 std::string Server::handleStartPageRequest() {
   // CSV csv;
@@ -138,17 +138,17 @@ std::string Server::handleStartPageRequest() {
     }
   }
 
-  // String definieren fuer Eintraege im Dropdownmenü:
+  // String definieren fuer Eintraege im Dropdownmenue:
   std::string OPTIONSLISTE;
 
   // wenn eine Datei geladen ist (Endung auf "csv"), dann soll der erste Eintrag
-  // im Auswahlmenü dieser Datei entsprechen:
+  // im Auswahlmenue dieser Datei entsprechen:
   if (loaded_file.substr(loaded_file.length() - 3, loaded_file.length()) ==
       "csv") {
     OPTIONSLISTE =
         "<option value=" + loaded_file + ">" + loaded_file + "</option>";
   }
-  // Erzeugung des Dropdownmenüs zur Auswahl der vorhandenden Messdateien für
+  // Erzeugung des Dropdownmenues zur Auswahl der vorhandenden Messdateien fuer
   // HTML:
   for (std::string file : data_vector) {
     OPTIONSLISTE += ("<option value=" + file + ">" + file + "</option>");
@@ -157,10 +157,14 @@ std::string Server::handleStartPageRequest() {
   httpStartPageString = Server::modifyHTMLText("OPTIONSLISTE", OPTIONSLISTE);
 
   // Es wird ein Text der gerade geladenen Datei angezeigt. Dazu wird der String
-  // nochmals modifiziert (hier zusätzlich Übergabe des zu modifizierenden
+  // nochmals modifiziert (hier zusaetzlich uebergabe des zu modifizierenden
   // Stringobjekts "httpStartPageString"):
   httpStartPageString = Server::modifyHTMLText(
-      "USERTEXT", "Gewaehlte Messreihe: " + loaded_file, httpStartPageString);
+      "USERTEXT", "Gewaehlte Messdatei: " + loaded_file, httpStartPageString);
+
+  // Metadaten
+  httpStartPageString = Server::modifyHTMLText(
+      "METADATEN", handleMetadataRequest(), httpStartPageString);
 
   // zwischengespeicherten HTML - String aktualisieren:
   Server::getInstance()->currentHTMLString = httpStartPageString;
@@ -180,7 +184,7 @@ std::string Server::handleStartPageRequest() {
 std::string Server::modifyHTMLText(std::string Schlagwort,
                                    std::string Ersatztext,
                                    std::string Stringobjekt) {
-  // Quelle für String replace:
+  // Quelle fuer String replace:
   // https://stackoverflow.com/questions/4643512/replace-substring-with-another-substring-c
 
   std::string HTMLString;
@@ -201,7 +205,7 @@ std::string Server::modifyHTMLText(std::string Schlagwort,
 
 /**
  * @brief Die Methode erstellt eine csv - Datei unter dem in "DB_DIR"
- * hinterlegten Verzeichnis mit dem Namen entsprechend der ausgewählten Datei
+ * hinterlegten Verzeichnis mit dem Namen entsprechend der ausgewaehlten Datei
  * und deren Inhalt
  *
  * @param data
@@ -219,8 +223,8 @@ void Server::createMetadata() {
   csv.setMetadata(DB_DIR + Server::getInstance()->chosen_file);
 
   std::ofstream outfile(DB_DIR + Server::getInstance()->chosen_file + "meta");
-  outfile << "Pfad: " + csv.metadata[0] + "\n";
-  outfile << "Format: " + csv.metadata[1] + "\n";
+  outfile << "Pfad: " + csv.metadata[0] + "<br>";
+  outfile << "Format: " + csv.metadata[1] + "<br>";
   outfile << "Datum: " + csv.metadata[2];
   outfile.close();
 }

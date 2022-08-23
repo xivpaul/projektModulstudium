@@ -9,7 +9,6 @@
 #include <string>
 #include <vector>
 
-
 class CSV {
 public:
   std::vector<Column> columns;
