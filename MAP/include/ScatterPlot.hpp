@@ -8,5 +8,5 @@ private:
 public:
   ScatterPlot();
   std::string plot(std::string DB_DIR_Input, std::string chosen_file,
-                   int y_column, CSV csv);
+                   int chosen_columns[2], CSV csv);
 };

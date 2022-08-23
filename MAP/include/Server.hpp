@@ -10,7 +10,7 @@ private:
   Server();
 
 public:
-  int y_column = 0;
+  int chosen_columns[2] = {0, 1};
   std::string currentHTMLString;
   static Server *getInstance();
   std::string chosen_file = "Keine Datei ausgewaehlt";
@@ -24,6 +24,6 @@ public:
   std::string handleAnalysisRequest();
   std::string handleVisualizationRequest();
   std::string handleStartPageRequest();
-  std::string handleColumnSetRequest(std::string Stringobject);
+  // std::string handleColumnSetRequest(std::string Stringobject);
   void start();
 };

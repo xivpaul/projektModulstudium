@@ -51,7 +51,6 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
       }
       // Die gewählte Datei wird direkt eingelesen, damit verfuegbare
       // Spaltennamen angezeigt werden können:
-      std::cout << "lese." << std::endl;
       csv.read(DB_DIR + Server::getInstance()->chosen_file);
 
       // Weboberfläche wird nach 2s neu geladen und aktualisiert:
@@ -76,15 +75,19 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
     } else if (mg_http_match_uri(hm, "/setColumn")) {
       struct mg_http_part part;
       size_t ofs = 0;
+      int i = 0;
       while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
+
         std::string filename_server(part.body.ptr);
         std::string chosen_column =
             filename_server.substr(0, (int)part.body.len);
-        // std::cout << chosen_column << std::endl;
-        Server::getInstance()->y_column = stoi(chosen_column);
-        // std::cout << Server::getInstance()->y_column << std::endl;
+        Server::getInstance()->chosen_columns[i] = stoi(chosen_column);
+        i++;
       }
-
+      std::string redirection =
+          "<head><meta http-equiv=\"Refresh\" content=\"0; "
+          "URL=/visualize\"></head>";
+      mg_http_reply(c, 200, "", redirection.c_str());
     } else if (mg_http_match_uri(hm, "/load")) {
       struct mg_http_part part;
       size_t ofs = 0;
@@ -104,36 +107,6 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
       struct mg_http_serve_opts opts = {.root_dir = WEB_ROOT.c_str()};
       mg_http_serve_dir(c, (struct mg_http_message *)ev_data, &opts);
     }
-  }
-}
-
-/**
- * @brief Die Methode gibt einen HTML String aus, um auf der Weboberfläche
- * Optionen zur Spaltenauswahl anzeigen zu können.
- *
- * @return std::string Es wird ein modifizierter HTML String
- * "httpColumnSetString" zurückgegeben.
- */
-std::string Server::handleColumnSetRequest(std::string Stringobject) {
-  // CSV csv;
-  std::string httpColumnSetString;
-  std::string SPALTENOPTIONEN;
-  auto loaded_file = Server::getInstance()->chosen_file;
-  int i = 0;
-  if (loaded_file.substr(loaded_file.length() - 3, loaded_file.length()) ==
-      "csv") {
-    for (Column column : csv.columns) {
-
-      SPALTENOPTIONEN += "<option value=" + std::to_string(i) + ">" +
-                         column.name + "</option>";
-      i++;
-    }
-
-    httpColumnSetString =
-        Server::modifyHTMLText("SPALTENAUSWAHL", SPALTENOPTIONEN, Stringobject);
-    return httpColumnSetString;
-  } else {
-    return Stringobject;
   }
 }
 
@@ -175,7 +148,8 @@ std::string Server::handleStartPageRequest() {
     OPTIONSLISTE =
         "<option value=" + loaded_file + ">" + loaded_file + "</option>";
   }
-  // Erzeugung des Dropdownmenüs für HTML:
+  // Erzeugung des Dropdownmenüs zur Auswahl der vorhandenden Messdateien für
+  // HTML:
   for (std::string file : data_vector) {
     OPTIONSLISTE += ("<option value=" + file + ">" + file + "</option>");
   }
@@ -187,11 +161,6 @@ std::string Server::handleStartPageRequest() {
   // Stringobjekts "httpStartPageString"):
   httpStartPageString = Server::modifyHTMLText(
       "USERTEXT", "Gewaehlte Messreihe: " + loaded_file, httpStartPageString);
-
-  // wenn eine Datei geladen wird, werden die Spaltenüberschriften im
-  // Dropdownmenü (Analyse) angezeigt:
-
-  httpStartPageString = Server::handleColumnSetRequest(httpStartPageString);
 
   // zwischengespeicherten HTML - String aktualisieren:
   Server::getInstance()->currentHTMLString = httpStartPageString;
@@ -288,7 +257,7 @@ std::string Server::handleVisualizationRequest() {
     return redirection;
   }
   return scattplot.plot(DB_DIR, Server::getInstance()->chosen_file,
-                        Server::getInstance()->y_column, csv);
+                        Server::getInstance()->chosen_columns, csv);
 }
 
 void Server::start() {
