@@ -81,8 +81,23 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
         std::string filename_server(part.body.ptr);
         std::string chosen_column =
             filename_server.substr(0, (int)part.body.len);
-        Server::getInstance()->chosen_columns[i] = stoi(chosen_column);
+        scattplot.chosen_columns[i] = stoi(chosen_column);
         i++;
+      }
+      std::string redirection =
+          "<head><meta http-equiv=\"Refresh\" content=\"0; "
+          "URL=/visualize\"></head>";
+      mg_http_reply(c, 200, "", redirection.c_str());
+
+    } else if (mg_http_match_uri(hm, "/plotstyle")) {
+      struct mg_http_part part;
+      size_t ofs = 0;
+      int i = 0;
+      std::string plotstyle;
+      while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
+        std::string filename_server(part.body.ptr);
+        plotstyle = filename_server.substr(0, (int)part.body.len);
+        scattplot.plotstyle = plotstyle;
       }
       std::string redirection =
           "<head><meta http-equiv=\"Refresh\" content=\"0; "
@@ -260,8 +275,7 @@ std::string Server::handleVisualizationRequest() {
                               "zur Hauptseite gebracht.</body>";
     return redirection;
   }
-  return scattplot.plot(DB_DIR, Server::getInstance()->chosen_file,
-                        Server::getInstance()->chosen_columns, csv);
+  return scattplot.plot(DB_DIR, Server::getInstance()->chosen_file, csv);
 }
 
 void Server::start() {
