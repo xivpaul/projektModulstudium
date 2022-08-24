@@ -2,19 +2,15 @@
 
 void CSV::setMetadata(std::string path) {
 
-  metadata.push_back(" ");
-  metadata.push_back(" ");
-  metadata.push_back(" ");
+  metadata.clear();
 
   // Create path
-  metadata.at(0) = path;
-  // metadata.push_back(path);
+  metadata.push_back(path);
 
   // Create format
   std::string format;
   format = path.substr(path.find_last_of(".") + 1);
-  // metadata.push_back(format);
-  metadata.at(1) = format;
+  metadata.push_back(format);
 
   // Create time
   time_t rawtime;
@@ -24,8 +20,7 @@ void CSV::setMetadata(std::string path) {
   timeinfo = localtime(&rawtime);
   strftime(buffer, sizeof(buffer), "%d-%m-%Y %H:%M:%S", timeinfo);
   std::string timestamp(buffer);
-  // metadata.push_back(timestamp);
-  metadata.at(2) = timestamp;
+  metadata.push_back(timestamp);
 }
 
 void CSV::read(std::string path) {
