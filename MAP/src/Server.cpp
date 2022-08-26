@@ -44,21 +44,47 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
         std::string filename(part.filename.ptr, part.filename.len);
         std::string data(part.body.ptr, part.body.len);
 
-        /* ignore filename and just replace data.csv as long as we have no file
-         * list */
-        Server::getInstance()->chosen_file = filename;
-        Server::getInstance()->handleCSVFileUpload(data);
-      }
-      // Die gewaehlte Datei wird direkt eingelesen, damit verfuegbare
-      // Spaltennamen angezeigt werden koennen:
-      csv.read(DB_DIR + Server::getInstance()->chosen_file);
+        // Vorhandene Daten unter Verzeichnis "DB_DIR" suchen:
+        bool allready_there = false;
+        auto file_to_load = filename;
+        const std::filesystem::path database_path{DB_DIR};
+        for (auto const &dir_entry :
+             std::filesystem::directory_iterator{database_path}) {
+          std::string filename = dir_entry.path().filename().string();
 
-      // Weboberflaeche wird nach 2s neu geladen und aktualisiert:
-      std::string redirection =
-          "<head><meta http-equiv=\"Refresh\" content=\"2; "
-          "URL=/\"></head><body>Upload erfolgreich! Sie werden gleich wieder "
-          "zur Hauptseite gebracht.</body>";
-      mg_http_reply(c, 303, "", redirection.c_str());
+          // Dateinamen werden verglichen. Wenn Dateiname schon vorhanden wird
+          // ein Flag gesetzt.
+          if (filename == file_to_load) {
+            allready_there = true;
+          }
+        }
+        // Bei existierender Datei wird zum erneuten Hochladen aufgefordert und
+        // an die Startseite zurückgegeben.
+        if (allready_there) {
+          std::string redirection =
+              "<head><meta http-equiv=\"Refresh\" content=\"8; "
+              "URL=/\"></head><body><h2>Upload fehlgeschlagen!</h2>"
+              "Datei existiert bereits!<br>"
+              "Bitte Datei umbenennen und erneut hochladen.<br>"
+              "Sie werden gleich wieder zur Hauptseite gebracht.</body>";
+          mg_http_reply(c, 303, "", redirection.c_str());
+        } else {
+          Server::getInstance()->chosen_file = filename;
+          Server::getInstance()->handleCSVFileUpload(data);
+
+          // Die gewaehlte Datei wird direkt eingelesen, damit verfuegbare
+          // Spaltennamen angezeigt werden koennen:
+          csv.read(DB_DIR + Server::getInstance()->chosen_file);
+
+          // Weboberflaeche wird nach 2s neu geladen und aktualisiert:
+          std::string redirection =
+              "<head><meta http-equiv=\"Refresh\" content=\"2; "
+              "URL=/\"></head><body>Upload erfolgreich! Sie werden gleich "
+              "wieder "
+              "zur Hauptseite gebracht.</body>";
+          mg_http_reply(c, 303, "", redirection.c_str());
+        }
+      }
 
     } else if (mg_http_match_uri(hm, "/metadata")) {
       std::string result = Server::getInstance()->handleMetadataRequest();
