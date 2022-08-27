@@ -53,3 +53,67 @@ std::string Visualization::setYColumnOptions(CSV csv, std::string loaded_file,
   }
   return Y_SPALTENOPTIONEN;
 }
+std::string Visualization::createAnalysisTableString(CSV csv) {
+  int anzahl_spalten = csv.columns.size();
+  std::string HTMLTableString = "<tr><th></th>";
+
+  // Spaltenueberschriften erzeugen:
+  for (int i = 0; i < anzahl_spalten; i++) {
+    HTMLTableString += "<th>" + (csv.columns[i].name + "</th>");
+  }
+  HTMLTableString += "</tr>";
+  //"Zeilenueberschrift" erzeugen
+  for (int i = 0; i < csv.ColumnCriteria.size(); i++) {
+    HTMLTableString += "<tr><td>" + csv.ColumnCriteria[i] + "</td>";
+    // Werte befuellen:
+    for (int j = 0; j < anzahl_spalten; j++) {
+      HTMLTableString += "<td>" + csv.AnalysisMatrix[j][i] +
+                         "</td>"; // hier Werte fuer Mittelwert etc.
+    }
+    HTMLTableString += "</tr>";
+  }
+  return HTMLTableString;
+}
+
+std::string Visualization::showAnalysis(CSV csv, std::string chosen_file) {
+  // Create time
+  time_t rawtime;
+  struct tm *timeinfo;
+  char buffer[80];
+  time(&rawtime);
+  timeinfo = localtime(&rawtime);
+  strftime(buffer, sizeof(buffer), "vom %d.%m.%Y, %H:%M:%SUhr", timeinfo);
+  std::string timestamp(buffer);
+
+  std::string httpAnalysisReportString = "<head>\
+      <title>Analysebericht anzeigen\
+      </title>\
+                                    <style>\
+table, th, td {\
+  border:1px solid black;\
+}\
+</style>\
+</head>\
+<body><div id='id_analysisreport'></div></body> \
+<h1>Analysebericht der Messdatei \"" + chosen_file +
+                                         "\"</h1>\
+                                         <h3>" +
+                                         timestamp + "</h3>\
+                                    <table>\
+" + createAnalysisTableString(csv) + "\
+</table>\
+  <br>\
+  <br>\
+  <br>\
+<form style=\"display: inline;\"action = \"http://localhost:8000\">\
+<input type = \"submit\" value = \"Zurueck zur Startseite\"/>\
+</form>\
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\
+<form style=\"display: inline;\">\
+<a href = \"data:application/xml;charset=utf-8,your code here\" download=\"filename.txt\" >Als Textdatei speichern</a>\
+</form>";
+
+  return httpAnalysisReportString;
+}
+
+// Quelle Table erstellen: https://www.w3schools.com/html/html_tables.asp

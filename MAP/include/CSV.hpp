@@ -11,6 +11,9 @@
 
 class CSV {
 public:
+  std::vector<std::string> ColumnCriteria = {"Minimalwert", "Maximalwert",
+                                             "Mittelwert", "Summe",
+                                             "Standardabweichung"};
   std::vector<Column> columns;
   std::vector<std::string> metadata;
 
@@ -18,7 +21,8 @@ public:
   void setMetadata(std::string path);
   Column getColumn(std::string name);
   std::vector<std::string> setMetadata();
-
+  void buildAnalysisMatrix();
+  std::vector<std::vector<std::string>> AnalysisMatrix;
   int nRows = 0;
 
   void print();

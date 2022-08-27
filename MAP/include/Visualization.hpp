@@ -7,8 +7,6 @@
 
 class Visualization {
 private:
-  std::vector<std::string> ColumnCriteria = {"Mittelwert", "Summe",
-                                             "Standardabweichung"};
   std::string createAnalysisTableString(CSV csv);
 
 public:

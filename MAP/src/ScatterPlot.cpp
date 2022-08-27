@@ -34,7 +34,7 @@ std::string ScatterPlot::plot(std::string DB_DIR_Input, std::string chosen_file,
   auto SPALTENOPTIONEN_X = setXColumnOptions(csv, chosen_file, chosen_columns);
   auto SPALTENOPTIONEN_Y = setYColumnOptions(csv, chosen_file, chosen_columns);
   std::string visualizationHttp =
-      "<head><script src='plotly-2.12.1.min.js'></script> \
+      "<head><title>Messdaten visualisieren</title><script src='plotly-2.12.1.min.js'></script> \
                                     </head><body><div id='myDiv'></div></body> \
                                     <script>var trace1 = { \
                                         x: " +
@@ -76,17 +76,17 @@ std::string ScatterPlot::plot(std::string DB_DIR_Input, std::string chosen_file,
           </select>\
           <input type=\"submit\" value=\"OK\" />\
         </form>\
-      <form style=\"display: inline;\" action =\"/plotstyle\" method=\"post\" enctype=\"multipart/form-data\">\
-<input type=\"radio\" id=\"id_lineplot\" name=\"PlotStyle\" value=\"lines+markers\" " +
+      <form style=\"display: inline;float:right\" action =\"/plotstyle\" method=\"post\" enctype=\"multipart/form-data\">\
+<input type=\"radio\" id=\"id_lineplot\" name=\"PlotStyle\" onclick=\"submit()\" value=\"lines+markers\" " +
       checked_lineplot + ">\
 <label for=\"id_lineplot\">LinePlot</label>\
-<input type=\"radio\" id=\"id_scatterplot \" name=\"PlotStyle\" value=\"markers\" " +
+<input type=\"radio\" id=\"id_scatterplot \" name=\"PlotStyle\" onclick=\"submit()\" value=\"markers\" " +
       checked_scatterplot + ">\
 <label for=\"id_scatterplot\">ScatterPlot</label>\
-&nbsp;&nbsp;\
-<input type=\"submit\" value=\"Plotstil aendern\">\
 </form>\
-<hr>\
+<br>\
+<br>\
+<br>\
 <form action = \"http://localhost:8000\">\
 <input type = \"submit\" value = \"Zurueck zur Startseite\"/>\
 </form>";

@@ -106,3 +106,30 @@ void CSV::print() {
     std::cout << std::endl;
   }
 }
+void CSV::buildAnalysisMatrix() {
+  AnalysisMatrix.clear();
+  std::vector<std::string> spalte;
+
+  for (int i = 0; i < columns.size(); i++) {
+    for (int j = 0; j < ColumnCriteria.size(); j++) {
+      spalte.push_back("NaN");
+    }
+    AnalysisMatrix.push_back(spalte);
+  }
+  // Minimum:
+  for (int i = 0; i < columns.size(); i++) {
+    AnalysisMatrix[i][0] = std::to_string(columns[i].minValue());
+  }
+  // Maximum:
+  for (int i = 0; i < columns.size(); i++) {
+    AnalysisMatrix[i][1] = std::to_string(columns[i].maxValue());
+  }
+  // Mittelwert:
+  for (int i = 0; i < columns.size(); i++) {
+    AnalysisMatrix[i][2] = std::to_string(columns[i].mean());
+  }
+  // Summe:
+  for (int i = 0; i < columns.size(); i++) {
+    AnalysisMatrix[i][3] = std::to_string(columns[i].sum());
+  }
+}

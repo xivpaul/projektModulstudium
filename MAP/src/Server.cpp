@@ -63,11 +63,11 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
     } else if (mg_http_match_uri(hm, "/metadata")) {
       std::string result = Server::getInstance()->handleMetadataRequest();
       mg_http_reply(c, 200, "", result.c_str());
-    } else if (mg_http_match_uri(hm, "/analyse")) {
-      std::string result = Server::getInstance()->handleAnalysisRequest();
-      mg_http_reply(c, 200, "", result.c_str());
     } else if (mg_http_match_uri(hm, "/visualize")) {
       std::string result = Server::getInstance()->handleVisualizationRequest();
+      mg_http_reply(c, 200, "", result.c_str());
+    } else if (mg_http_match_uri(hm, "/analyse")) {
+      std::string result = Server::getInstance()->handleAnalysisRequest();
       mg_http_reply(c, 200, "", result.c_str());
     } else if (mg_http_match_uri(hm, "/")) {
       std::string result = Server::getInstance()->handleStartPageRequest();
@@ -77,7 +77,10 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
       size_t ofs = 0;
       int i = 0;
       while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
-
+        MG_INFO(("Chunk name: [%.*s] filename: [%.*s] length: %lu bytes",
+                 (int)part.name.len, part.name.ptr, (int)part.filename.len,
+                 part.filename.ptr, (unsigned long)part.body.len));
+        MG_INFO(("Data: %.*s", (int)part.body.len, part.body.ptr));
         std::string filename_server(part.body.ptr);
         std::string chosen_column =
             filename_server.substr(0, (int)part.body.len);
@@ -261,10 +264,12 @@ std::string Server::handleAnalysisRequest() {
                               "zur Hauptseite gebracht.</body>";
     return redirection;
   }
-  double result = csv.columns[0].mean();
+  // double result = csv.columns[0].mean();
+  csv.buildAnalysisMatrix();
 
-  return "Ergebnis der Analyse: \nMittelwert der Spalte 0 = " +
-         std::to_string(result);
+  // return "Ergebnis der Analyse: \nMittelwert der Spalte 0 = " +
+  //  std::to_string(result);
+  return scattplot.showAnalysis(csv, Server::getInstance()->chosen_file);
 }
 
 std::string Server::handleVisualizationRequest() {

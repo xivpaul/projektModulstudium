@@ -1,9 +1,12 @@
 #pragma once
 
+#include "Value.hpp"
+#include <algorithm> // std::min_element
+#include <iostream>
+#include <iterator> // std::begin, std::end
 #include <string>
 #include <vector>
 
-#include "Value.hpp"
 
 class Column {
 public:
@@ -14,6 +17,9 @@ public:
 
   double sum();
   double mean();
+  double minValue();
+  double maxValue();
+  double standardDeviation();
 
   std::string toString();
 
