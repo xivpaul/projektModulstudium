@@ -84,6 +84,17 @@ void CSV::read(std::string path) {
       nRows++;
     }
   }
+  if (idx) {
+    // Indizierung der Messpunkte hinzufuegen:
+    auto ColumnName = Value("Index Messpunkte");
+    Column column(ColumnName.stringValue);
+    for (int i = 1; i <= nRows; i++) {
+      auto messpt = Value(i * 1.0);
+      column.values.push_back(messpt);
+    }
+    // columns.push_back(column);
+    columns.insert(columns.begin(), column);
+  }
 }
 
 void CSV::print() {
@@ -110,26 +121,27 @@ void CSV::buildAnalysisMatrix() {
   AnalysisMatrix.clear();
   std::vector<std::string> spalte;
 
-  for (int i = 0; i < columns.size(); i++) {
+  int anzahl_spalten = columns.size();
+  for (int i = 0; i < anzahl_spalten; i++) {
     for (int j = 0; j < ColumnCriteria.size(); j++) {
-      spalte.push_back("NaN");
+      spalte.push_back("nan");
     }
     AnalysisMatrix.push_back(spalte);
   }
   // Minimum:
-  for (int i = 0; i < columns.size(); i++) {
-    AnalysisMatrix[i][0] = std::to_string(columns[i].minValue());
+  for (int i = 0; i < anzahl_spalten - idx; i++) {
+    AnalysisMatrix[i][0] = std::to_string(columns[i + idx].minValue());
   }
   // Maximum:
-  for (int i = 0; i < columns.size(); i++) {
-    AnalysisMatrix[i][1] = std::to_string(columns[i].maxValue());
+  for (int i = 0; i < anzahl_spalten - idx; i++) {
+    AnalysisMatrix[i][1] = std::to_string(columns[i + idx].maxValue());
   }
   // Mittelwert:
-  for (int i = 0; i < columns.size(); i++) {
-    AnalysisMatrix[i][2] = std::to_string(columns[i].mean());
+  for (int i = 0; i < anzahl_spalten - idx; i++) {
+    AnalysisMatrix[i][2] = std::to_string(columns[i + idx].mean());
   }
   // Summe:
-  for (int i = 0; i < columns.size(); i++) {
-    AnalysisMatrix[i][3] = std::to_string(columns[i].sum());
+  for (int i = 0; i < anzahl_spalten - idx; i++) {
+    AnalysisMatrix[i][3] = std::to_string(columns[i + idx].sum());
   }
 }

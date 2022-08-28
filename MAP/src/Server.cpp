@@ -72,20 +72,19 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
     } else if (mg_http_match_uri(hm, "/")) {
       std::string result = Server::getInstance()->handleStartPageRequest();
       mg_http_reply(c, 200, "", result.c_str());
-    } else if (mg_http_match_uri(hm, "/setColumn")) {
+    } else if (mg_http_match_uri(hm, "/setXColumn") or
+               mg_http_match_uri(hm, "/setYColumn")) {
       struct mg_http_part part;
       size_t ofs = 0;
-      int i = 0;
+      std::string chosen_column;
       while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
-        MG_INFO(("Chunk name: [%.*s] filename: [%.*s] length: %lu bytes",
-                 (int)part.name.len, part.name.ptr, (int)part.filename.len,
-                 part.filename.ptr, (unsigned long)part.body.len));
-        MG_INFO(("Data: %.*s", (int)part.body.len, part.body.ptr));
         std::string filename_server(part.body.ptr);
-        std::string chosen_column =
-            filename_server.substr(0, (int)part.body.len);
-        scattplot.chosen_columns[i] = stoi(chosen_column);
-        i++;
+        chosen_column = filename_server.substr(0, (int)part.body.len);
+      }
+      if (mg_http_match_uri(hm, "/setXColumn")) {
+        scattplot.chosen_columns[0] = stoi(chosen_column);
+      } else {
+        scattplot.chosen_columns[1] = stoi(chosen_column);
       }
       std::string redirection =
           "<head><meta http-equiv=\"Refresh\" content=\"0; "

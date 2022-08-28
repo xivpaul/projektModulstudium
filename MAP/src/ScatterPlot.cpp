@@ -62,21 +62,23 @@ std::string ScatterPlot::plot(std::string DB_DIR_Input, std::string chosen_file,
                                         }; \
                                         Plotly.newPlot('myDiv', data, layout); \
                                     </script>\
-      <form style=\"display: inline;\" action =\"/setColumn\" method=\"post\" enctype=\"multipart/form-data\">\
+      <form style=\"display: inline;\" action =\"/setXColumn\" method=\"post\" enctype=\"multipart/form-data\">\
           <label for=\"Spaltenwahl\">X-Achse waehlen:</label>\
-          <select name=\"spalte\" id=\"id_xspalte\">\
+          <select name=\"spalte\" id=\"id_xspalte\" onchange=\"submit()\">\
             " +
       SPALTENOPTIONEN_X + "\
           </select>\
+          </form>\
           &nbsp;&nbsp;&nbsp;\
+          <form style=\"display: inline;\" action =\"/setYColumn\" method=\"post\" enctype=\"multipart/form-data\">\
            <label for=\"Spaltenwahl\">Y-Achse waehlen:</label>\
-          <select name=\"spalte\" id=\"id_yspalte\">\
+          <select name=\"spalte\" id=\"id_yspalte\" onchange=\"submit()\">\
             " +
       SPALTENOPTIONEN_Y + "\
           </select>\
-          <input type=\"submit\" value=\"OK\" />\
         </form>\
-      <form style=\"display: inline;float:right\" action =\"/plotstyle\" method=\"post\" enctype=\"multipart/form-data\">\
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\
+      <form style=\"display: inline;\" action =\"/plotstyle\" method=\"post\" enctype=\"multipart/form-data\">\
 <input type=\"radio\" id=\"id_lineplot\" name=\"PlotStyle\" onclick=\"submit()\" value=\"lines+markers\" " +
       checked_lineplot + ">\
 <label for=\"id_lineplot\">LinePlot</label>\

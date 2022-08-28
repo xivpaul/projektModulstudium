@@ -58,7 +58,9 @@ std::string Visualization::createAnalysisTableString(CSV csv) {
   std::string HTMLTableString = "<tr><th></th>";
 
   // Spaltenueberschriften erzeugen:
-  for (int i = 0; i < anzahl_spalten; i++) {
+  for (int i = csv.idx; i < anzahl_spalten;
+       i++) { // Indizierung der Messdaten nicht in Tabelle (erste Spalte),
+              // deshalb Start bei 1
     HTMLTableString += "<th>" + (csv.columns[i].name + "</th>");
   }
   HTMLTableString += "</tr>";
@@ -66,7 +68,9 @@ std::string Visualization::createAnalysisTableString(CSV csv) {
   for (int i = 0; i < csv.ColumnCriteria.size(); i++) {
     HTMLTableString += "<tr><td>" + csv.ColumnCriteria[i] + "</td>";
     // Werte befuellen:
-    for (int j = 0; j < anzahl_spalten; j++) {
+    for (int j = 0; j < anzahl_spalten - csv.idx;
+         j++) { // Indizierung der Messdaten nicht in Analyse (erste Spalte),
+                // deshalb Start bei 1
       HTMLTableString += "<td>" + csv.AnalysisMatrix[j][i] +
                          "</td>"; // hier Werte fuer Mittelwert etc.
     }
@@ -84,7 +88,7 @@ std::string Visualization::showAnalysis(CSV csv, std::string chosen_file) {
   timeinfo = localtime(&rawtime);
   strftime(buffer, sizeof(buffer), "vom %d.%m.%Y, %H:%M:%SUhr", timeinfo);
   std::string timestamp(buffer);
-
+  std::string anzahl_messpunkte = std::to_string(csv.columns[0].values.size());
   std::string httpAnalysisReportString = "<head>\
       <title>Analysebericht anzeigen\
       </title>\
@@ -99,6 +103,9 @@ table, th, td {\
                                          "\"</h1>\
                                          <h3>" +
                                          timestamp + "</h3>\
+                                         <br>\
+<h3>Anzahl der Messpunkte: " + anzahl_messpunkte +
+                                         "</h3>\
                                     <table>\
 " + createAnalysisTableString(csv) + "\
 </table>\

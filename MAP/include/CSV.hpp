@@ -10,7 +10,10 @@
 #include <vector>
 
 class CSV {
+private:
 public:
+  bool idx = true; // erste SPalte enthaelt Nummerierung der Messpunkte ja
+                   // (true) nein (false)
   std::vector<std::string> ColumnCriteria = {"Minimalwert", "Maximalwert",
                                              "Mittelwert", "Summe",
                                              "Standardabweichung"};
