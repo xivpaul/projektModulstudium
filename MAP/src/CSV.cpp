@@ -144,4 +144,8 @@ void CSV::buildAnalysisMatrix() {
   for (int i = 0; i < anzahl_spalten - idx; i++) {
     AnalysisMatrix[i][3] = std::to_string(columns[i + idx].sum());
   }
+  // Standardabweichung:
+  for (int i = 0; i < anzahl_spalten - idx; i++) {
+    AnalysisMatrix[i][4] = std::to_string(columns[i + idx].standardDeviation());
+  }
 }

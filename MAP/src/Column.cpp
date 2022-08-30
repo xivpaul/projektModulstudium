@@ -49,8 +49,12 @@ std::string Column::toString() {
 }
 
 double Column::minValue() {
+  if (!isType(NUMBER)) {
+    return NAN;
+  }
   double minimum = values[0].numberValue * 1.0;
   // std::cout << minimum << std::endl;
+
   for (Value value : values) {
     if (value.numberValue < minimum) {
       minimum = value.numberValue;
@@ -60,6 +64,9 @@ double Column::minValue() {
 }
 
 double Column::maxValue() {
+  if (!isType(NUMBER)) {
+    return NAN;
+  }
   double maximum = values[0].numberValue * 1.0;
   ;
   for (Value value : values) {
@@ -70,6 +77,12 @@ double Column::maxValue() {
   return maximum;
 }
 double Column::standardDeviation() {
-  double deviation;
-  return deviation;
+  if (!isType(NUMBER)) {
+    return NAN;
+  }
+  double deviation = 0;
+  for (Value value : values) {
+    deviation += pow(value.numberValue - Column::mean(), 2);
+  }
+  return sqrt(deviation / values.size());
 }
