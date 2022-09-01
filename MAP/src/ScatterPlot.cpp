@@ -1,7 +1,5 @@
 #include "ScatterPlot.hpp"
-// #include <iostream>
-#include <string>
-
+// Konstruktor:
 ScatterPlot::ScatterPlot() {}
 
 /**
@@ -18,9 +16,9 @@ ScatterPlot::ScatterPlot() {}
  * @return std::string std::string Es wird ein modifizierter HTML String
  * "httpColumnSetString" zurückgegeben.
  */
-std::string ScatterPlot::plot(std::string DB_DIR_Input, std::string chosen_file,
-                              CSV csv) {
-  compute(DB_DIR_Input, chosen_file, chosen_columns);
+std::string ScatterPlot::plot(CSV *csv, std::string DB_DIR_Input,
+                              std::string chosen_file) {
+  compute(csv, DB_DIR_Input, chosen_file, chosen_columns);
   std::string checked_lineplot = "";
   std::string checked_scatterplot = "";
 
@@ -51,12 +49,12 @@ std::string ScatterPlot::plot(std::string DB_DIR_Input, std::string chosen_file,
       chosen_file + "', \
                                          xaxis: {\
                                           title: '" +
-      csv.columns[chosen_columns[0]].name +
+      csv->columns[chosen_columns[0]].name +
 
       "'},\
                                          yaxis: {\
                                           title: '" +
-      csv.columns[chosen_columns[1]].name +
+      csv->columns[chosen_columns[1]].name +
 
       "'}\
                                         }; \

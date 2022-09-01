@@ -92,6 +92,30 @@
     <div>
       <div id="analyze">
         <h2>Messdatei analysieren</h2>
+
+        <h3>Zu transformierende Spalte waehlen:</h3>
+        <form action="/transformColumn" method="post" enctype="multipart/form-data">
+          <label for="Transformationsspalte"></label>
+          <select name="transfspalte" id="id_transfspalte" onchange="submit()">
+            TRANSFORMATIONSSPALTE
+          </select>
+        </form>
+
+        <h3>Operation waehlen:</h3>
+        <form action="/setOperation" method="post" enctype="multipart/form-data">
+          <label for="Operation"></label>
+          <select name="oper" id="id_oper" onchange="submit()">
+            OPERATION
+          </select>
+        </form>
+
+        <h3>Wert eingeben:</h3>
+        <form action="/setTransformationValue" method="post" enctype="multipart/form-data">
+          EINGABEWERT
+          <button type="submit">Transformieren</button>
+        </form>
+
+        <hr>
         <form action="/analyse">
           <button type="submit">Analysebericht erstellen</button>
         </form>

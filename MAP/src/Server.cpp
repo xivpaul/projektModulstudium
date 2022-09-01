@@ -1,12 +1,4 @@
 #include "Server.hpp"
-#include "CSV.hpp"
-#include "ScatterPlot.hpp"
-#include "Visualization.hpp"
-#include <filesystem>
-#include <fstream>
-#include <iostream>
-#include <regex>
-#include <sstream>
 
 const std::string WEB_ROOT = "../web_root";
 const std::string DB_DIR = "../db/";
@@ -120,6 +112,61 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
           "<head><meta http-equiv=\"Refresh\" content=\"0; "
           "URL=/\"></head>";
       mg_http_reply(c, 200, "", redirection.c_str());
+    } else if (mg_http_match_uri(hm, "/setOperation")) {
+      struct mg_http_part part;
+      size_t ofs = 0;
+      while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
+        std::string received_data(part.body.ptr);
+        csv.TransformOperation = received_data.substr(0, (int)part.body.len);
+      }
+
+      std::string redirection =
+          "<head><meta http-equiv=\"Refresh\" content=\"0; "
+          "URL=/\"></head>";
+      mg_http_reply(c, 200, "", redirection.c_str());
+    } else if (mg_http_match_uri(hm, "/transformColumn")) {
+      struct mg_http_part part;
+      size_t ofs = 0;
+      while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
+        // MG_INFO(("Chunk name: [%.*s] filename: [%.*s] length: %lu bytes",
+        //          (int)part.name.len, part.name.ptr, (int)part.filename.len,
+        //          part.filename.ptr, (unsigned long)part.body.len));
+        // MG_INFO(("Data: %.*s", (int)part.body.len, part.body.ptr));
+        std::string received_data(part.body.ptr);
+
+        csv.ColumnToTransform =
+            stoi(received_data.substr(0, (int)part.body.len));
+      }
+
+      std::string redirection =
+          "<head><meta http-equiv=\"Refresh\" content=\"0; "
+          "URL=/\"></head>";
+      mg_http_reply(c, 200, "", redirection.c_str());
+    } else if (mg_http_match_uri(hm, "/setTransformationValue")) {
+      struct mg_http_part part;
+      size_t ofs = 0;
+      while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
+        std::string received_data(part.body.ptr);
+        try {
+          csv.TransformValue =
+              stod(received_data.substr(0, (int)part.body.len));
+
+          Server::getInstance()->handleTransformationRequest();
+          std::string redirection =
+              "<head><meta http-equiv=\"Refresh\" content=\"0; "
+              "URL=/\"></head>";
+          mg_http_reply(c, 200, "", redirection.c_str());
+        } catch (...) {
+          std::string redirection =
+              "<head><meta http-equiv=\"Refresh\" content=\"3; "
+              "URL=/\"></head><body>Transformationswert darf nicht leer sein "
+              "und "
+              "keine Buchstaben enthalten!\n Sie werden gleich wieder "
+              "zur Hauptseite gebracht.</body>";
+          mg_http_reply(c, 200, "", redirection.c_str());
+        }
+      }
+
     } else {
       struct mg_http_serve_opts opts = {.root_dir = WEB_ROOT.c_str()};
       mg_http_serve_dir(c, (struct mg_http_message *)ev_data, &opts);
@@ -136,42 +183,10 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
  * @return std::string HTML String mit Dropdown - Menue zur Ausgabe an mongoose
  */
 std::string Server::handleStartPageRequest() {
-  // CSV csv;
-  std::string httpStartPageString;
-  std::vector<std::string> data_vector;
   auto loaded_file = Server::getInstance()->chosen_file;
-
-  // Vorhandene Daten unter Verzeichnis "DB_DIR" suchen:
-  const std::filesystem::path database_path{DB_DIR};
-  for (auto const &dir_entry :
-       std::filesystem::directory_iterator{database_path}) {
-    std::string filename = dir_entry.path().filename().string();
-
-    // die Dateinamen werden im Stringvektor gepspeichert, wenn Sie nicht der
-    // gerade geladenen Datei entsprechen und auf "csv" enden:
-    if (filename != loaded_file and
-        filename.substr(filename.length() - 3, filename.length()) == "csv") {
-      data_vector.push_back(filename);
-    }
-  }
-
-  // String definieren fuer Eintraege im Dropdownmenue:
-  std::string OPTIONSLISTE;
-
-  // wenn eine Datei geladen ist (Endung auf "csv"), dann soll der erste Eintrag
-  // im Auswahlmenue dieser Datei entsprechen:
-  if (loaded_file.substr(loaded_file.length() - 3, loaded_file.length()) ==
-      "csv") {
-    OPTIONSLISTE =
-        "<option value=" + loaded_file + ">" + loaded_file + "</option>";
-  }
-  // Erzeugung des Dropdownmenues zur Auswahl der vorhandenden Messdateien fuer
-  // HTML:
-  for (std::string file : data_vector) {
-    OPTIONSLISTE += ("<option value=" + file + ">" + file + "</option>");
-  }
   // Erzeugen eines HTML Strings mit der gerade erzeugten OPTIONSLISTE:
-  httpStartPageString = Server::modifyHTMLText("OPTIONSLISTE", OPTIONSLISTE);
+  std::string httpStartPageString = Server::modifyHTMLText(
+      "OPTIONSLISTE", csv.createDropDownString_Files(loaded_file, DB_DIR));
 
   // Es wird ein Text der gerade geladenen Datei angezeigt. Dazu wird der String
   // nochmals modifiziert (hier zusaetzlich uebergabe des zu modifizierenden
@@ -182,6 +197,18 @@ std::string Server::handleStartPageRequest() {
   // Metadaten
   httpStartPageString = Server::modifyHTMLText(
       "METADATEN", handleMetadataRequest(), httpStartPageString);
+  // Erzeugung des Dropdownmenues zur Auswahl der zu transformierenden Spalte
+  // fuer HTML:
+
+  httpStartPageString = Server::modifyHTMLText(
+      "TRANSFORMATIONSSPALTE", csv.createDropDownString_Column(),
+      httpStartPageString);
+
+  httpStartPageString = Server::modifyHTMLText(
+      "OPERATION", csv.createDropDownString_Operation(), httpStartPageString);
+
+  httpStartPageString = Server::modifyHTMLText(
+      "EINGABEWERT", csv.createInputValueString(), httpStartPageString);
 
   // zwischengespeicherten HTML - String aktualisieren:
   Server::getInstance()->currentHTMLString = httpStartPageString;
@@ -232,18 +259,7 @@ void Server::handleCSVFileUpload(std::string data) {
   std::ofstream outfile(DB_DIR + Server::getInstance()->chosen_file);
   outfile << data;
   outfile.close();
-  Server::createMetadata();
-}
-
-void Server::createMetadata() {
-  // CSV csv;
-  csv.setMetadata(DB_DIR + Server::getInstance()->chosen_file);
-
-  std::ofstream outfile(DB_DIR + Server::getInstance()->chosen_file + "meta");
-  outfile << "Pfad: " + csv.metadata[0] + "<br>";
-  outfile << "Format: " + csv.metadata[1] + "<br>";
-  outfile << "Datum: " + csv.metadata[2];
-  outfile.close();
+  csv.createMetadata(DB_DIR + Server::getInstance()->chosen_file);
 }
 
 std::string Server::handleMetadataRequest() {
@@ -263,13 +279,10 @@ std::string Server::handleAnalysisRequest() {
                               "zur Hauptseite gebracht.</body>";
     return redirection;
   }
-  // double result = csv.columns[0].mean();
   csv.buildAnalysisMatrix();
-
-  // return "Ergebnis der Analyse: \nMittelwert der Spalte 0 = " +
-  //  std::to_string(result);
-  return scattplot.showAnalysis(csv, Server::getInstance()->chosen_file);
+  return scattplot.showAnalysis(&csv, Server::getInstance()->chosen_file);
 }
+void Server::handleTransformationRequest() { csv.transformColumnValues(); }
 
 std::string Server::handleVisualizationRequest() {
   if (csv.columns.size() < 1) {
@@ -279,7 +292,7 @@ std::string Server::handleVisualizationRequest() {
                               "zur Hauptseite gebracht.</body>";
     return redirection;
   }
-  return scattplot.plot(DB_DIR, Server::getInstance()->chosen_file, csv);
+  return scattplot.plot(&csv, DB_DIR, Server::getInstance()->chosen_file);
 }
 
 void Server::start() {
