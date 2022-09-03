@@ -112,6 +112,21 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
           "<head><meta http-equiv=\"Refresh\" content=\"0; "
           "URL=/\"></head>";
       mg_http_reply(c, 200, "", redirection.c_str());
+      // copy csv to webroot to offer client download of file
+      try {
+        try {
+          std::filesystem::remove(WEB_ROOT + "/download_folder/download.csv");
+        } catch (...) {
+          std::cout << "File not available!" << std::endl;
+        }
+        std::filesystem::copy(
+            DB_DIR + Server::getInstance()->chosen_file,
+            WEB_ROOT + "/download_folder/download.csv",
+            std::filesystem::copy_options::overwrite_existing);
+      } catch (std::filesystem::filesystem_error &e) {
+        std::cout << e.what() << '\n';
+      }
+
     } else if (mg_http_match_uri(hm, "/setOperation")) {
       struct mg_http_part part;
       size_t ofs = 0;
@@ -188,6 +203,10 @@ std::string Server::handleStartPageRequest() {
   std::string httpStartPageString = Server::modifyHTMLText(
       "OPTIONSLISTE", csv.createDropDownString_Files(loaded_file, DB_DIR));
 
+  // Erzeugen eines HTML Strings mit der gerade erzeugten CURRENT_FILENAME:
+  httpStartPageString = Server::modifyHTMLText("CURRENT_FILENAME", loaded_file,
+                                               httpStartPageString);
+
   // Es wird ein Text der gerade geladenen Datei angezeigt. Dazu wird der String
   // nochmals modifiziert (hier zusaetzlich uebergabe des zu modifizierenden
   // Stringobjekts "httpStartPageString"):
@@ -209,6 +228,9 @@ std::string Server::handleStartPageRequest() {
 
   httpStartPageString = Server::modifyHTMLText(
       "EINGABEWERT", csv.createInputValueString(), httpStartPageString);
+
+  httpStartPageString =
+      Server::modifyHTMLText("path_to_file", loaded_file, httpStartPageString);
 
   // zwischengespeicherten HTML - String aktualisieren:
   Server::getInstance()->currentHTMLString = httpStartPageString;
