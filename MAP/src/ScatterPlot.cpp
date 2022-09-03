@@ -45,6 +45,8 @@ std::string ScatterPlot::plot(CSV *csv, std::string DB_DIR_Input,
                                         }; \
                                         var data = [trace1]; \
                                         var layout = {\
+                                        height: 800, \
+                                        autosize: true, \
                                           title: ' " +
       chosen_file + "', \
                                          xaxis: {\
