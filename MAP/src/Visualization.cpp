@@ -114,11 +114,17 @@ table, th, td {\
 <input type = \"submit\" value = \"Zurueck zur Startseite\"/>\
 </form>\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\
-<form style=\"display: inline;\">\
-<a href = \"data:application/xml;charset=utf-8,your code here\" download=\"filename.txt\" >Als Textdatei speichern</a>\
-</form>";
+<button onclick=\"printFunction();\">Drucken</button>\
+<script> function printFunction() {window.print();}\
+</script>\
+</ form> ";
 
   return httpAnalysisReportString;
 }
 
 // Quelle Table erstellen: https://www.w3schools.com/html/html_tables.asp
+
+// Quelle für Print/speichern https://www.csestack.org/code-print-save-html-pdf/
+
+// &lt;!--<form style=\"display: inline;\">\
+// <a href = \"data:application/xml;charset=utf-8,your code here\" download=\"filename.txt\" >Als Textdatei speichern</a>--&gt\;
