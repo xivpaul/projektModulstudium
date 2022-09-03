@@ -88,7 +88,8 @@ std::string Visualization::showAnalysis(CSV *csv, std::string chosen_file) {
   std::string timestamp(buffer);
   std::string anzahl_messpunkte = std::to_string(csv->columns[0].values.size());
   std::string httpAnalysisReportString = "<head>\
-      <title>Analysebericht anzeigen\
+      <title>Analysebericht von " + chosen_file +
+                                         "\
       </title>\
                                     <style>\
 table, th, td {\
