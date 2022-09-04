@@ -304,7 +304,10 @@ std::string Server::handleAnalysisRequest() {
   csv.buildAnalysisMatrix();
   return scattplot.showAnalysis(&csv, Server::getInstance()->chosen_file);
 }
-void Server::handleTransformationRequest() { csv.transformColumnValues(); }
+void Server::handleTransformationRequest() {
+  csv.transformColumnValues(DB_DIR + "Trans_" +
+                            Server::getInstance()->chosen_file);
+}
 
 std::string Server::handleVisualizationRequest() {
   if (csv.columns.size() < 1) {

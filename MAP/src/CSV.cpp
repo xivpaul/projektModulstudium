@@ -118,6 +118,34 @@ void CSV::print() {
     std::cout << std::endl;
   }
 }
+void CSV::creatTransCSV(std::string FileWithPath) {
+  std::ofstream outputfile(FileWithPath);
+  for (int j = (0 + int(idx)); j < columns.size(); j++) { // neu
+    outputfile << "\"" << columns[j].name << "\"";        // neu
+    if (j < (columns.size() - 1)) {
+      outputfile << ",";  // neu
+    } else {              // neu
+      outputfile << "\n"; // neu
+    }                     // neu
+  }
+  // outputfile << "\n"; //alt
+  for (int i = 0; i < columns[0].values.size(); i++) {
+    for (int j = (0 + int(idx)); j < columns.size(); j++) {
+      if (columns[j].values[i].type == NUMBER) {
+        outputfile << columns[j].values[i].numberValue;
+      } else {
+        outputfile << "\"" << columns[j].values[i].stringValue << "\"";
+      }
+      if (j < (columns.size() - 1)) {
+        outputfile << ",";  // neu
+      } else {              // neu
+        outputfile << "\n"; // neu
+      }                     // neu
+    }
+  }
+  outputfile.close();
+};
+
 void CSV::createMetadata(std::string FileWithPath) {
   // CSV csv;
   setMetadata(FileWithPath);
@@ -161,7 +189,7 @@ void CSV::buildAnalysisMatrix() {
   }
 }
 
-void CSV::transformColumnValues() {
+void CSV::transformColumnValues(std::string FileWithPath) {
 
   if (TransformOperation == "+") {
 
@@ -184,6 +212,7 @@ void CSV::transformColumnValues() {
       columns[ColumnToTransform].values[i].numberValue *= TransformValue;
     }
   }
+  CSV::creatTransCSV(FileWithPath);
 }
 
 std::string CSV::createDropDownString_Column() {
@@ -252,15 +281,15 @@ std::string CSV::createDropDownString_Files(std::string loaded_file,
   // String definieren fuer Eintraege im Dropdownmenue:
   std::string OPTIONSLISTE;
 
-  // wenn eine Datei geladen ist (Endung auf "csv"), dann soll der erste Eintrag
-  // im Auswahlmenue dieser Datei entsprechen:
+  // wenn eine Datei geladen ist (Endung auf "csv"), dann soll der erste
+  // Eintrag im Auswahlmenue dieser Datei entsprechen:
   if (loaded_file.substr(loaded_file.length() - 3, loaded_file.length()) ==
       "csv") {
     OPTIONSLISTE =
         "<option value=" + loaded_file + ">" + loaded_file + "</option>";
   }
-  // Erzeugung des Dropdownmenues zur Auswahl der vorhandenden Messdateien fuer
-  // HTML:
+  // Erzeugung des Dropdownmenues zur Auswahl der vorhandenden Messdateien
+  // fuer HTML:
   for (std::string file : data_vector) {
     OPTIONSLISTE += ("<option value=" + file + ">" + file + "</option>");
   }

@@ -10,7 +10,6 @@
 #include <string>
 #include <vector>
 
-
 class CSV {
 private:
 public:
@@ -34,8 +33,9 @@ public:
   int ColumnToTransform = 1;
   std::string TransformOperation = "+";
   double TransformValue = 0.0;
-  void transformColumnValues();
+  void transformColumnValues(std::string FileWithPath);
   void print();
+  void creatTransCSV(std::string FileWithPath);
   std::string createDropDownString_Column();
   std::string createDropDownString_Operation();
   std::string createInputValueString();
