@@ -8,6 +8,7 @@
 class Visualization {
 private:
   std::string createAnalysisTableString(CSV *csv);
+  const int maxHistoryEntries = 7;
 
 public:
   Visualization();
@@ -23,4 +24,10 @@ public:
   void save(std::string path);
   void compute(CSV *csv, std::string DB_DIR_Input, std::string chosen_file,
                int chosen_columns[2]);
+  std::string createTransformationHistoryTableString();
+  std::vector<std::string> trans_ColumnHistory;
+  std::vector<std::string> trans_OperationHistory;
+  std::vector<std::string> trans_ValueHistory;
+  int Transformationszaehler = 0;
+  void clearHistory();
 };

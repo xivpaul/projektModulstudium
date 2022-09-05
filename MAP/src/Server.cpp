@@ -36,11 +36,10 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
         std::string filename(part.filename.ptr, part.filename.len);
         std::string data(part.body.ptr, part.body.len);
 
-        /* ignore filename and just replace data.csv as long as we have no file
-         * list */
         Server::getInstance()->chosen_file = filename;
         Server::getInstance()->handleCSVFileUpload(data);
       }
+      scattplot.clearHistory();
       // Die gewaehlte Datei wird direkt eingelesen, damit verfuegbare
       // Spaltennamen angezeigt werden koennen:
       csv.read(DB_DIR + Server::getInstance()->chosen_file);
@@ -106,7 +105,7 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
             filename_server.substr(0, (int)part.body.len);
       }
       csv.read(DB_DIR + Server::getInstance()->chosen_file);
-
+      scattplot.clearHistory();
       // Die HTML wird neu geladen, damit die Aenderungen sichtbar werden:
       std::string redirection =
           "<head><meta http-equiv=\"Refresh\" content=\"0; "
@@ -160,25 +159,37 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
     } else if (mg_http_match_uri(hm, "/setTransformationValue")) {
       struct mg_http_part part;
       size_t ofs = 0;
-      while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
-        std::string received_data(part.body.ptr);
-        try {
-          csv.TransformValue =
-              stod(received_data.substr(0, (int)part.body.len));
-
-          Server::getInstance()->handleTransformationRequest();
-          std::string redirection =
-              "<head><meta http-equiv=\"Refresh\" content=\"0; "
-              "URL=/\"></head>";
-          mg_http_reply(c, 200, "", redirection.c_str());
-        } catch (...) {
-          std::string redirection =
-              "<head><meta http-equiv=\"Refresh\" content=\"3; "
-              "URL=/\"></head><body>Transformationswert darf nicht leer sein "
-              "und "
-              "keine Buchstaben enthalten!\n Sie werden gleich wieder "
-              "zur Hauptseite gebracht.</body>";
-          mg_http_reply(c, 200, "", redirection.c_str());
+      std::string redirection;
+      if (csv.columns.size() < 1) {
+        redirection = "<head><meta http-equiv=\"Refresh\" content=\"3; "
+                      "URL=/\"></head><body>Bitte wahelen Sie zunaechst eine "
+                      "Messdatei aus!\n Sie werden gleich wieder "
+                      "zur Hauptseite gebracht.</body>";
+        mg_http_reply(c, 200, "", redirection.c_str());
+      } else {
+        while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
+          std::string received_data(part.body.ptr);
+          try {
+            csv.TransformValue =
+                stod(received_data.substr(0, (int)part.body.len));
+            scattplot.trans_ColumnHistory.push_back(
+                csv.columns[csv.ColumnToTransform].name);
+            scattplot.trans_ValueHistory.push_back(
+                std::to_string(csv.TransformValue));
+            scattplot.trans_OperationHistory.push_back(csv.TransformOperation);
+            Server::getInstance()->handleTransformationRequest();
+            redirection = "<head><meta http-equiv=\"Refresh\" content=\"0; "
+                          "URL=/\"></head>";
+            mg_http_reply(c, 200, "", redirection.c_str());
+          } catch (...) {
+            std::string redirection =
+                "<head><meta http-equiv=\"Refresh\" content=\"3; "
+                "URL=/\"></head><body>Transformationswert darf nicht leer sein "
+                "und "
+                "keine Buchstaben enthalten!\n Sie werden gleich wieder "
+                "zur Hauptseite gebracht.</body>";
+            mg_http_reply(c, 200, "", redirection.c_str());
+          }
         }
       }
 
@@ -228,6 +239,9 @@ std::string Server::handleStartPageRequest() {
 
   httpStartPageString = Server::modifyHTMLText(
       "EINGABEWERT", csv.createInputValueString(), httpStartPageString);
+  httpStartPageString = Server::modifyHTMLText(
+      "TRANSFORMATIONSHISTORIE",
+      scattplot.createTransformationHistoryTableString(), httpStartPageString);
 
   httpStartPageString =
       Server::modifyHTMLText("path_to_file", loaded_file, httpStartPageString);

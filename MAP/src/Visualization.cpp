@@ -123,6 +123,48 @@ table, th, td {\
   return httpAnalysisReportString;
 }
 
+void Visualization::clearHistory() {
+  trans_ColumnHistory.clear();
+  trans_ValueHistory.clear();
+  trans_OperationHistory.clear();
+  Transformationszaehler = 0;
+}
+
+std::string Visualization::createTransformationHistoryTableString() {
+  Transformationszaehler++; // Transformationszaehler wird um 1 erhöht, wenn die
+  // Methode aufgerufen wird
+  std::vector<std::string> trans_Number;
+  int init_value = 1;
+  if (Transformationszaehler > maxHistoryEntries) {
+    init_value = Transformationszaehler - maxHistoryEntries;
+  }
+  for (int i = init_value; i <= Transformationszaehler; i++) {
+    trans_Number.push_back(std::to_string(i));
+  }
+
+  if (trans_ColumnHistory.size() > maxHistoryEntries) {
+    trans_OperationHistory.erase(trans_OperationHistory.begin());
+    trans_ColumnHistory.erase(trans_ColumnHistory.begin());
+    trans_ValueHistory.erase(trans_ValueHistory.begin());
+  }
+  // Spaltenueberschriften erzeugen:
+  std::string HTMLTableString =
+      "<tr><th>Nr.</th><th>Spaltenname</th><th>Operation</"
+      "th><th>Eingabewert</th></tr>";
+  // Werte befuellen:
+  for (int j = 0; j < trans_ColumnHistory.size(); j++) {
+    HTMLTableString += "<tr><td>" + trans_Number[j] +
+                       "</td>"; // Nummerierung der Operation hinzufuegen
+    HTMLTableString +=
+        "<td>" + trans_ColumnHistory[j] + "</td>"; // Spaltenname hinzufuegen
+    HTMLTableString +=
+        "<td>" + trans_OperationHistory[j] + "</td>"; // Operation hinzufuegen
+    HTMLTableString += "<td>" + trans_ValueHistory[j] +
+                       "</td></tr>"; // eingegebenen Wert hinzufuegen
+  }
+
+  return HTMLTableString;
+}
 // Quelle Table erstellen: https://www.w3schools.com/html/html_tables.asp
 
 // Quelle für Print/speichern https://www.csestack.org/code-print-save-html-pdf/

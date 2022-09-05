@@ -32,18 +32,27 @@
       padding: 2em;
       float: left;
       width: 42%;
+
+    }
+
+    #transformationhistory {
+      background: #9ef7e4;
+      border-radius: .5em;
+      padding: 2em;
+      float: right;
+      width: 42%;
+      flex: 1;
     }
 
     #visualize {
       background: #f7e89e;
       border-radius: .5em;
       padding: 2em;
-      float: right;
-      width: 42%;
+      flex: 1;
     }
 
     #wrapper {
-      margin-top: 1em;
+      display: flex;
     }
 
     form * {
@@ -58,7 +67,6 @@
       <h1>Messdaten Analyse Plattform</h1>
     </div>
 
-    <!-- Bereich Upload Anfang -->
     <div id="upload">
       <h2>Messdaten hochladen</h2>
       <form action="/upload" method="post" enctype="multipart/form-data">
@@ -77,23 +85,14 @@
         <input type="submit" value="OK" />
         <a href="download_folder/download.csv" download="CURRENT_FILENAME">Download file</a>
         <br>
-        <!-- Hier wird der Text angezeigt welche Datei gerade geladen ist-->
-        <h3>USERTEXT</h3>
-        <!-- -->
-
+        <h3>USERTEXT</h3> <!-- Hier wird der Text angezeigt welche Datei gerade geladen ist-->
         METADATEN
       </form>
-      <!-- a href="/metadata">Metadaten anzeigen</a -->
-      <!--h4>Metadaten:</h4 -->
-
-    </div>
-    <!-- Bereich Upload Ende -->
-
-    <!-- Bereich Analyse: -->
-    <div>
+    </div> <!-- Bereich Upload Ende -->
+    <div id="wrapper">
       <div id="analyze">
+        <!-- Bereich Analyse: -->
         <h2>Messdatei analysieren</h2>
-
         <h3>Zu transformierende Spalte waehlen:</h3>
         <form action="/transformColumn" method="post" enctype="multipart/form-data">
           <label for="Transformationsspalte"></label>
@@ -101,7 +100,6 @@
             TRANSFORMATIONSSPALTE
           </select>
         </form>
-
         <h3>Operation waehlen:</h3>
         <form action="/setOperation" method="post" enctype="multipart/form-data">
           <label for="Operation"></label>
@@ -115,26 +113,34 @@
           EINGABEWERT
           <button type="submit">Transformieren</button>
         </form>
-
-        <hr>
+      </div>
+      <div id="transformationhistory">
+        <h2> Transformationshistorie</h2>
+        <br>
+        <form>
+          <style>
+            table,
+            th,
+            td {
+              border: 1px solid black;
+            }
+          </style>
+          <table>
+            TRANSFORMATIONSHISTORIE
+          </table>
+        </form>
+        <br><br>
         <form action="/analyse">
           <button type="submit">Analysebericht erstellen</button>
         </form>
-
-      </div>
-      <!-- Bereich Analyse Ende -->
-
-      <!-- Bereich Visualisierung: -->
-      <div id="visualize">
-        <h2>Messdatei visualisieren</h2>
-
-        <form action="/visualize">
-          <button type="submit">Diagramm zeichnen</button>
-        </form>
       </div>
     </div>
-
-    <!-- Bereich Visualisierung Ende -->
+    <div id="visualize">
+      <h2>Messdatei visualisieren</h2>
+      <form action="/visualize">
+        <button type="submit">Diagramm zeichnen</button>
+      </form>
+    </div>
   </div>
 </body>
 
