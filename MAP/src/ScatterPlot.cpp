@@ -19,30 +19,47 @@ ScatterPlot::ScatterPlot() {}
 std::string ScatterPlot::plot(CSV *csv, std::string DB_DIR_Input,
                               std::string chosen_file) {
   compute(csv, DB_DIR_Input, chosen_file, chosen_columns);
+  auto SPALTENOPTIONEN_X = setXColumnOptions(csv, chosen_file, chosen_columns);
+  auto SPALTENOPTIONEN_Y = setYColumnOptions(csv, chosen_file, chosen_columns);
+
   std::string checked_lineplot = "";
   std::string checked_scatterplot = "";
-
+  std::string checked_histogram = "";
+  std::string YAxis = "";
+  std::string style;
+  std::string DropdownMenue_Y = "";
+  std::string title_XAxis = csv->columns[chosen_columns[0]].name;
+  std::string title_YAxis = "";
   if (plotstyle == "markers") {
     checked_scatterplot = "checked = checked";
   }
   if (plotstyle == "lines+markers") {
     checked_lineplot = "checked = checked";
   }
+  if (plotstyle == "histogram") {
+    checked_histogram = "checked = checked";
 
-  auto SPALTENOPTIONEN_X = setXColumnOptions(csv, chosen_file, chosen_columns);
-  auto SPALTENOPTIONEN_Y = setYColumnOptions(csv, chosen_file, chosen_columns);
+    style = ",type:'histogram'";
+    title_YAxis = "Haeufigkeit";
+  } else {
+    style = ",mode:'" + plotstyle + "',type:'scatter'";
+    YAxis = ",y: " + yColumn;
+    DropdownMenue_Y =
+        "<form style=\"display: inline;\" action =\"/setYColumn\" method=\"post\" enctype=\"multipart/form-data\">\
+           <label for=\"Spaltenwahl\">Y-Achse waehlen:</label>\
+          <select name=\"spalte\" id=\"id_yspalte\" onchange=\"submit()\">\
+            " +
+        SPALTENOPTIONEN_Y + "</select>\
+        </form>";
+    title_YAxis = csv->columns[chosen_columns[1]].name;
+  }
+
   std::string visualizationHttp =
       "<head><title>Messdaten visualisieren</title><script src='plotly-2.12.1.min.js'></script> \
                                     </head><body><div id='myDiv'></div></body> \
                                     <script>var trace1 = { \
                                         x: " +
-      xColumn + /* [1, 2, 3, 4]*/ ", \
-                                        y: " +
-      yColumn + /* [10, 15, 13, 17]*/ ", \
-                                        mode: '" +
-      plotstyle + "', \
-                                            type: 'scatter' \
-                                        }; \
+      xColumn + YAxis + style + "}; \
                                         var data = [trace1]; \
                                         var layout = {\
                                         height: 800, \
@@ -51,12 +68,12 @@ std::string ScatterPlot::plot(CSV *csv, std::string DB_DIR_Input,
       chosen_file + "', \
                                          xaxis: {\
                                           title: '" +
-      csv->columns[chosen_columns[0]].name +
+      title_XAxis +
 
       "'},\
                                          yaxis: {\
                                           title: '" +
-      csv->columns[chosen_columns[1]].name +
+      title_YAxis +
 
       "'}\
                                         }; \
@@ -70,13 +87,8 @@ std::string ScatterPlot::plot(CSV *csv, std::string DB_DIR_Input,
           </select>\
           </form>\
           &nbsp;&nbsp;&nbsp;\
-          <form style=\"display: inline;\" action =\"/setYColumn\" method=\"post\" enctype=\"multipart/form-data\">\
-           <label for=\"Spaltenwahl\">Y-Achse waehlen:</label>\
-          <select name=\"spalte\" id=\"id_yspalte\" onchange=\"submit()\">\
-            " +
-      SPALTENOPTIONEN_Y + "\
-          </select>\
-        </form>\
+" + DropdownMenue_Y +
+      "\
         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\
       <form style=\"display: inline;\" action =\"/plotstyle\" method=\"post\" enctype=\"multipart/form-data\">\
 <input type=\"radio\" id=\"id_lineplot\" name=\"PlotStyle\" onclick=\"submit()\" value=\"lines+markers\" " +
@@ -85,6 +97,9 @@ std::string ScatterPlot::plot(CSV *csv, std::string DB_DIR_Input,
 <input type=\"radio\" id=\"id_scatterplot \" name=\"PlotStyle\" onclick=\"submit()\" value=\"markers\" " +
       checked_scatterplot + ">\
 <label for=\"id_scatterplot\">ScatterPlot</label>\
+<input type=\"radio\" id=\"id_histogram\" name=\"PlotStyle\" onclick=\"submit()\" value=\"histogram\" " +
+      checked_histogram + ">\
+<label for=\"id_histogram\">Histogramm</label>\
 </form>\
 <br>\
 <br>\
