@@ -11,7 +11,6 @@
 #include <sstream>
 #include <string>
 
-
 class Server {
 private:
   static Server *instance;
@@ -30,7 +29,7 @@ public:
   std::string handleAnalysisRequest();
   std::string handleVisualizationRequest();
   std::string handleStartPageRequest();
-  // std::string handleColumnSetRequest(std::string Stringobject);
-  void handleTransformationRequest();
+  void handleDownloadRequest();
+  void handleTransformationRequest(double TransformValue);
   void start();
 };

@@ -6,10 +6,6 @@ void Visualization::save(std::string path) {}
 
 void Visualization::compute(CSV *csv, std::string DB_DIR_Input,
                             std::string chosen_file, int chosen_columns[2]) {
-  /* todo: actually, instead of fixed values for x and y the data should be
-   * loaded from the CSV file */
-
-  std::cout << csv->columns[1].values[0].numberValue << std::endl;
   xColumn = csv->columns[chosen_columns[0]].toString();
   yColumn = csv->columns[chosen_columns[1]].toString();
 }
@@ -58,7 +54,7 @@ std::string Visualization::createAnalysisTableString(CSV *csv) {
   // Spaltenueberschriften erzeugen:
   for (int i = csv->idx; i < anzahl_spalten;
        i++) { // Indizierung der Messdaten nicht in Tabelle (erste Spalte),
-              // deshalb Start bei 1
+              // deshalb Start bei csv->idx, Standardeinstellung = 1)
     HTMLTableString += "<th>" + (csv->columns[i].name + "</th>");
   }
   HTMLTableString += "</tr>";
@@ -66,9 +62,7 @@ std::string Visualization::createAnalysisTableString(CSV *csv) {
   for (int i = 0; i < csv->ColumnCriteria.size(); i++) {
     HTMLTableString += "<tr><td>" + csv->ColumnCriteria[i] + "</td>";
     // Werte befuellen:
-    for (int j = 0; j < anzahl_spalten - csv->idx;
-         j++) { // Indizierung der Messdaten nicht in Analyse (erste Spalte),
-                // deshalb Start bei 1
+    for (int j = 0; j < anzahl_spalten - csv->idx; j++) {
       HTMLTableString += "<td>" + csv->AnalysisMatrix[j][i] +
                          "</td>"; // hier Werte fuer Mittelwert etc.
     }
@@ -131,8 +125,6 @@ void Visualization::clearHistory() {
 }
 
 std::string Visualization::createTransformationHistoryTableString() {
-  Transformationszaehler++; // Transformationszaehler wird um 1 erhöht, wenn die
-  // Methode aufgerufen wird
   std::vector<std::string> trans_Number;
   int init_value = 1;
   if (Transformationszaehler > maxHistoryEntries) {

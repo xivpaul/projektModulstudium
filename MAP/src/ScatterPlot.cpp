@@ -38,12 +38,13 @@ std::string ScatterPlot::plot(CSV *csv, std::string DB_DIR_Input,
   }
   if (plotstyle == "histogram") {
     checked_histogram = "checked = checked";
-
     style = ",type:'histogram'";
     title_YAxis = "Haeufigkeit";
   } else {
     style = ",mode:'" + plotstyle + "',type:'scatter'";
     YAxis = ",y: " + yColumn;
+    // String erzeugen, um ein Dropdownmenue fuer die Y - Achsenwahl ausgeben zu
+    // lassen (bei Histogramm nur X - Achse auswaehlbar):
     DropdownMenue_Y =
         "<form style=\"display: inline;\" action =\"/setYColumn\" method=\"post\" enctype=\"multipart/form-data\">\
            <label for=\"Spaltenwahl\">Y-Achse waehlen:</label>\
