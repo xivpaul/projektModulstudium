@@ -216,7 +216,8 @@ void CSV::transformColumnValues(std::string FileWithPath) {
 }
 
 std::string CSV::createDropDownString_Column() {
-  std::string DD_String_Column = "<option value=\"0\">no file chosen</option>";
+  std::string DD_String_Column =
+      "<option value=\"0\">Keine Datei ausgewählt</option>";
   if (columns.size() > 0) {
     DD_String_Column = "<option value=" + std::to_string(ColumnToTransform) +
                        ">" + columns[ColumnToTransform].name + "</option>";
@@ -294,4 +295,22 @@ std::string CSV::createDropDownString_Files(std::string loaded_file,
     OPTIONSLISTE += ("<option value=" + file + ">" + file + "</option>");
   }
   return OPTIONSLISTE;
+}
+
+void CSV::downloadFileFromServer(std::string path_webroot,
+                                 std::string path_databank,
+                                 std::string filename) {
+  // copy csv to webroot to offer client download of file
+  try {
+    try {
+      std::filesystem::remove(path_webroot + "/download_folder/download.csv");
+    } catch (...) {
+      std::cout << "File not available!" << std::endl;
+    }
+    std::filesystem::copy(path_databank + filename,
+                          path_webroot + "/download_folder/download.csv",
+                          std::filesystem::copy_options::overwrite_existing);
+  } catch (std::filesystem::filesystem_error &e) {
+    std::cout << e.what() << '\n';
+  }
 }

@@ -1,6 +1,6 @@
-#include "ScatterPlot.hpp"
+#include "Plot.hpp"
 // Konstruktor:
-ScatterPlot::ScatterPlot() {}
+Plot::Plot() {}
 
 /**
  * @brief Die Methode gibt einen HTML String aus, um auf der Weboberfläche
@@ -16,8 +16,8 @@ ScatterPlot::ScatterPlot() {}
  * @return std::string std::string Es wird ein modifizierter HTML String
  * "httpColumnSetString" zurückgegeben.
  */
-std::string ScatterPlot::plot(CSV *csv, std::string DB_DIR_Input,
-                              std::string chosen_file) {
+std::string Plot::plot(CSV *csv, std::string DB_DIR_Input,
+                       std::string chosen_file) {
   compute(csv, DB_DIR_Input, chosen_file, chosen_columns);
   auto SPALTENOPTIONEN_X = setXColumnOptions(csv, chosen_file, chosen_columns);
   auto SPALTENOPTIONEN_Y = setYColumnOptions(csv, chosen_file, chosen_columns);

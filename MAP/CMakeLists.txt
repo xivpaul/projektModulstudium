@@ -14,7 +14,7 @@ set(SOURCES
     src/Server.cpp
     src/Value.cpp
     src/Visualization.cpp
-    src/ScatterPlot.cpp
+    src/Plot.cpp
 )
 
 # Add an executable with the above sources

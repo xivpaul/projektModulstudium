@@ -41,4 +41,6 @@ public:
   std::string createInputValueString();
   std::string createDropDownString_Files(std::string loaded_file,
                                          std::string DB_DIR);
+  void downloadFileFromServer(std::string path_webroot,
+                              std::string path_databank, std::string filename);
 };

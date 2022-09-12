@@ -5,7 +5,7 @@ const std::string DB_DIR = "../db/";
 
 Server::Server() {}
 
-ScatterPlot scattplot;
+Plot plotObj;
 CSV csv;
 
 Server *Server::getInstance() {
@@ -28,16 +28,12 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
       struct mg_http_part part;
       size_t ofs = 0;
       while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
-        // MG_INFO(("Chunk name: [%.*s] filename: [%.*s] length: %lu bytes",
-        //    (int) part.name.len, part.name.ptr, (int) part.filename.len,
-        //    part.filename.ptr, (unsigned long) part.body.len));
-        // MG_INFO(("Data: %.*s", (int) part.body.len, part.body.ptr));
 
         std::string filename(part.filename.ptr, part.filename.len);
         std::string data(part.body.ptr, part.body.len);
 
         // Vorhandene Daten unter Verzeichnis "DB_DIR" suchen:
-        bool allready_there = false;
+        bool already_there = false;
         auto file_to_load = filename;
         const std::filesystem::path database_path{DB_DIR};
         for (auto const &dir_entry :
@@ -47,12 +43,12 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
           // Dateinamen werden verglichen. Wenn Dateiname schon vorhanden wird
           // ein Flag gesetzt.
           if (filename == file_to_load) {
-            allready_there = true;
+            already_there = true;
           }
         }
         // Bei existierender Datei wird zum erneuten Hochladen aufgefordert und
         // an die Startseite zurückgegeben.
-        if (allready_there) {
+        if (already_there) {
           std::string redirection =
               "<head><meta http-equiv=\"Refresh\" content=\"8; "
               "URL=/\"></head><body><h2>Upload fehlgeschlagen!</h2>"
@@ -100,9 +96,9 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
         chosen_column = filename_server.substr(0, (int)part.body.len);
       }
       if (mg_http_match_uri(hm, "/setXColumn")) {
-        scattplot.chosen_columns[0] = stoi(chosen_column);
+        plotObj.chosen_columns[0] = stoi(chosen_column);
       } else {
-        scattplot.chosen_columns[1] = stoi(chosen_column);
+        plotObj.chosen_columns[1] = stoi(chosen_column);
       }
       std::string redirection =
           "<head><meta http-equiv=\"Refresh\" content=\"0; "
@@ -117,7 +113,7 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
       while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
         std::string filename_server(part.body.ptr);
         plotstyle = filename_server.substr(0, (int)part.body.len);
-        scattplot.plotstyle = plotstyle;
+        plotObj.plotstyle = plotstyle;
       }
       std::string redirection =
           "<head><meta http-equiv=\"Refresh\" content=\"0; "
@@ -132,7 +128,7 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
             filename_server.substr(0, (int)part.body.len);
       }
       csv.read(DB_DIR + Server::getInstance()->chosen_file);
-      scattplot.clearHistory();
+      plotObj.clearHistory();
       // Die HTML wird neu geladen, damit die Aenderungen sichtbar werden:
       std::string redirection =
           "<head><meta http-equiv=\"Refresh\" content=\"0; "
@@ -248,10 +244,17 @@ std::string Server::handleStartPageRequest() {
       "EINGABEWERT", csv.createInputValueString(), httpStartPageString);
   httpStartPageString = Server::modifyHTMLText(
       "TRANSFORMATIONSHISTORIE",
-      scattplot.createTransformationHistoryTableString(), httpStartPageString);
+      plotObj.createTransformationHistoryTableString(), httpStartPageString);
 
   httpStartPageString =
       Server::modifyHTMLText("path_to_file", loaded_file, httpStartPageString);
+  if (csv.columns.size() > 0) {
+    std::string DownloadString =
+        "<a href=\"download_folder/download.csv\" "
+        "download=\"CURRENT_FILENAME\">Gewählte Messdatei herunterladen</a>";
+    httpStartPageString = Server::modifyHTMLText("DOWNLOADLINK", DownloadString,
+                                                 httpStartPageString);
+  }
 
   // zwischengespeicherten HTML - String aktualisieren:
   Server::getInstance()->currentHTMLString = httpStartPageString;
@@ -323,8 +326,9 @@ std::string Server::handleAnalysisRequest() {
     return redirection;
   }
   csv.buildAnalysisMatrix();
-  return scattplot.showAnalysis(&csv, Server::getInstance()->chosen_file);
+  return plotObj.showAnalysis(&csv, Server::getInstance()->chosen_file);
 }
+
 void Server::handleTransformationRequest(double TransformValue) {
   std::string pathToTranformedFile =
       DB_DIR + "Trans_" + Server::getInstance()->chosen_file;
@@ -333,26 +337,15 @@ void Server::handleTransformationRequest(double TransformValue) {
 
   // Aktuelle Transformationseingeben in Vektoren schreiben fuer Anzeige in
   // Tabelle
-  scattplot.trans_ColumnHistory.push_back(
+  plotObj.trans_ColumnHistory.push_back(
       csv.columns[csv.ColumnToTransform].name);
-  scattplot.trans_ValueHistory.push_back(std::to_string(csv.TransformValue));
-  scattplot.trans_OperationHistory.push_back(csv.TransformOperation);
-  scattplot.Transformationszaehler += 1;
+  plotObj.trans_ValueHistory.push_back(std::to_string(csv.TransformValue));
+  plotObj.trans_OperationHistory.push_back(csv.TransformOperation);
+  plotObj.Transformationszaehler += 1;
 }
 void Server::handleDownloadRequest() {
-  // copy csv to webroot to offer client download of file
-  try {
-    try {
-      std::filesystem::remove(WEB_ROOT + "/download_folder/download.csv");
-    } catch (...) {
-      std::cout << "File not available!" << std::endl;
-    }
-    std::filesystem::copy(DB_DIR + Server::getInstance()->chosen_file,
-                          WEB_ROOT + "/download_folder/download.csv",
-                          std::filesystem::copy_options::overwrite_existing);
-  } catch (std::filesystem::filesystem_error &e) {
-    std::cout << e.what() << '\n';
-  }
+  csv.downloadFileFromServer(WEB_ROOT, DB_DIR,
+                             Server::getInstance()->chosen_file);
 }
 
 std::string Server::handleVisualizationRequest() {
@@ -363,7 +356,7 @@ std::string Server::handleVisualizationRequest() {
                               "zur Hauptseite gebracht.</body>";
     return redirection;
   }
-  return scattplot.plot(&csv, DB_DIR, Server::getInstance()->chosen_file);
+  return plotObj.plot(&csv, DB_DIR, Server::getInstance()->chosen_file);
 }
 
 void Server::start() {

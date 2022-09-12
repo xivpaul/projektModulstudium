@@ -1,7 +1,7 @@
 #pragma once
 
 #include "CSV.hpp"
-#include "ScatterPlot.hpp"
+#include "Plot.hpp"
 #include "Visualization.hpp"
 #include "mongoose.h"
 #include <filesystem>
