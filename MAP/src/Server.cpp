@@ -249,9 +249,10 @@ std::string Server::handleStartPageRequest() {
   httpStartPageString =
       Server::modifyHTMLText("path_to_file", loaded_file, httpStartPageString);
   if (csv.columns.size() > 0) {
-    std::string DownloadString =
-        "<a href=\"download_folder/download.csv\" "
-        "download=\"CURRENT_FILENAME\">Gewählte Messdatei herunterladen</a>";
+    std::string DownloadString = "<a href=\"download_folder/download.csv\" "
+                                 "download=" +
+                                 Server::getInstance()->chosen_file +
+                                 ">Gewählte Messdatei herunterladen</a>";
     httpStartPageString = Server::modifyHTMLText("DOWNLOADLINK", DownloadString,
                                                  httpStartPageString);
   }
