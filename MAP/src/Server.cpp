@@ -50,13 +50,13 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
         // an die Startseite zurückgegeben.
         if (already_there) {
           std::string redirection =
-              "<head><meta http-equiv=\"Refresh\" content=\"8; "
+              "<head><meta http-equiv=\"Refresh\" content=\"6; "
               "URL=/\"></head><body><h2>Upload fehlgeschlagen!</h2>"
               "Datei existiert bereits!<br>"
               "Bitte Datei umbenennen und erneut hochladen.<br>"
               "Sie werden gleich wieder zur Hauptseite gebracht.</body>";
           mg_http_reply(c, 303, "", redirection.c_str());
-        } else {
+        } else if (filename.length() > 0) {
           Server::getInstance()->chosen_file = filename;
           Server::getInstance()->handleCSVFileUpload(data);
 
@@ -66,17 +66,21 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
 
           // Weboberflaeche wird nach 2s neu geladen und aktualisiert:
           std::string redirection =
-              "<head><meta http-equiv=\"Refresh\" content=\"2; "
-              "URL=/\"></head><body>Upload erfolgreich! Sie werden gleich "
+              "<head><meta http-equiv=\"Refresh\" content=\"4; "
+              "URL=/\"></head><body><h2>Erfolg!</h2>Upload erfolgreich! Sie "
+              "werden gleich "
               "wieder "
               "zur Hauptseite gebracht.</body>";
           mg_http_reply(c, 303, "", redirection.c_str());
+        } else {
+          std::string redirection =
+              "<head><meta http-equiv=\"Refresh\" content=\"6; "
+              "URL=/\"></head><body><h2>Fehler!</h2>\
+              Bitte waehlen Sie zuerst eine Datei aus, die hochgeladen werden soll! <br>\
+              Sie werden gleich wieder zur Hauptseite gebracht.</body>";
+          mg_http_reply(c, 303, "", redirection.c_str());
         }
       }
-
-    } else if (mg_http_match_uri(hm, "/metadata")) {
-      std::string result = Server::getInstance()->handleMetadataRequest();
-      mg_http_reply(c, 200, "", result.c_str());
     } else if (mg_http_match_uri(hm, "/visualize")) {
       std::string result = Server::getInstance()->handleVisualizationRequest();
       mg_http_reply(c, 200, "", result.c_str());
@@ -143,11 +147,6 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
         std::string received_data(part.body.ptr);
         csv.TransformOperation = received_data.substr(0, (int)part.body.len);
       }
-
-      std::string redirection =
-          "<head><meta http-equiv=\"Refresh\" content=\"0; "
-          "URL=/\"></head>";
-      mg_http_reply(c, 200, "", redirection.c_str());
     } else if (mg_http_match_uri(hm, "/transformColumn")) {
       struct mg_http_part part;
       size_t ofs = 0;
@@ -157,20 +156,16 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
         csv.ColumnToTransform =
             stoi(received_data.substr(0, (int)part.body.len));
       }
-
-      std::string redirection =
-          "<head><meta http-equiv=\"Refresh\" content=\"0; "
-          "URL=/\"></head>";
-      mg_http_reply(c, 200, "", redirection.c_str());
     } else if (mg_http_match_uri(hm, "/setTransformationValue")) {
       struct mg_http_part part;
       size_t ofs = 0;
       std::string redirection;
       // Benutzernachricht, wenn noch keine Messdatei ausgewaehlt wurde
       if (csv.columns.size() < 1) {
-        redirection = "<head><meta http-equiv=\"Refresh\" content=\"3; "
-                      "URL=/\"></head><body>Bitte waehlen Sie zunaechst eine "
-                      "Messdatei aus!\n Sie werden gleich wieder "
+        redirection = "<head><meta http-equiv=\"Refresh\" content=\"5; "
+                      "URL=/\"></head><body><h2>Hinweis</h2>Bitte waehlen Sie "
+                      "zunaechst eine "
+                      "Messdatei aus!<br> Sie werden gleich wieder "
                       "zur Hauptseite gebracht.</body>";
         mg_http_reply(c, 200, "", redirection.c_str());
       } else {
@@ -186,10 +181,11 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
             mg_http_reply(c, 200, "", redirection.c_str());
           } catch (...) {
             std::string redirection =
-                "<head><meta http-equiv=\"Refresh\" content=\"3; "
-                "URL=/\"></head><body>Transformationswert darf nicht leer sein "
+                "<head><meta http-equiv=\"Refresh\" content=\"4; "
+                "URL=/\"></head><body><h2>Fehler!</h2>Transformationswert darf "
+                "nicht leer sein "
                 "und "
-                "keine Buchstaben enthalten!\n Sie werden gleich wieder "
+                "keine Buchstaben enthalten!<br> Sie werden gleich wieder "
                 "zur Hauptseite gebracht.</body>";
             mg_http_reply(c, 200, "", redirection.c_str());
           }
