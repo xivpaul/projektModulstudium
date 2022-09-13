@@ -48,7 +48,9 @@ std::string Visualization::setYColumnOptions(CSV *csv, std::string loaded_file,
   return Y_SPALTENOPTIONEN;
 }
 std::string Visualization::createAnalysisTableString(CSV *csv) {
+
   int anzahl_spalten = csv->columns.size();
+
   std::string HTMLTableString = "<tr><th></th>";
 
   // Spaltenueberschriften erzeugen:
@@ -91,14 +93,20 @@ table, th, td {\
 }\
 </style>\
 </head>\
-<body><div id='id_analysisreport'></div></body> \
-<h1>Analysebericht der Messdatei \"" + chosen_file +
+<body>\
+<br><div id = 'id_analysisreport'></ div></ body>\
+<h1> Analysebericht der Messdatei \"" + chosen_file +
                                          "\"</h1>\
                                          <h3>" +
                                          timestamp + "</h3>\
                                          <br>\
 <h3>Anzahl der Messpunkte: " + anzahl_messpunkte +
                                          "</h3>\
+                                         <h2> Transformationshistorie</ h2>\
+<form><table> " + createTransformationHistoryTableString() +
+                                         "</table>\
+</form>\
+<h2> Uebersicht zur Messdatenbewertung</ h2>\
                                     <table>\
 " + createAnalysisTableString(csv) + "\
 </table>\

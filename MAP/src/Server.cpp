@@ -169,7 +169,7 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
       // Benutzernachricht, wenn noch keine Messdatei ausgewaehlt wurde
       if (csv.columns.size() < 1) {
         redirection = "<head><meta http-equiv=\"Refresh\" content=\"3; "
-                      "URL=/\"></head><body>Bitte wahelen Sie zunaechst eine "
+                      "URL=/\"></head><body>Bitte waehlen Sie zunaechst eine "
                       "Messdatei aus!\n Sie werden gleich wieder "
                       "zur Hauptseite gebracht.</body>";
         mg_http_reply(c, 200, "", redirection.c_str());

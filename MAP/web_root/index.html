@@ -21,7 +21,7 @@
     }
 
     #upload {
-      background: #f7c09e;
+      background: #ffcd61a2;
       border-radius: .5em;
       padding: 2em;
     }
@@ -100,7 +100,7 @@
     <div id="wrapper">
       <div id="analyze">
         <!-- Bereich Analyse: -->
-        <h2>Messdatei analysieren</h2>
+        <h2>Messdatei transformieren</h2>
         <h3>Zu transformierende Spalte waehlen:</h3>
         <form action="/transformColumn" method="post" enctype="multipart/form-data">
           <label for="Transformationsspalte"></label>
@@ -137,16 +137,16 @@
             TRANSFORMATIONSHISTORIE
           </table>
         </form>
-        <br><br>
-        <form action="/analyse">
-          <button type="submit">Analysebericht erstellen</button>
-        </form>
       </div>
     </div>
     <div id="visualize">
-      <h2>Messdatei visualisieren</h2>
-      <form action="/visualize">
+      <h2>Messdatei analysieren</h2>
+      <form style="display:inline;" action="/visualize">
         <button type="submit">Diagramm zeichnen</button>
+      </form>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      <form style="display:inline;" action="/analyse">
+        <button type="submit">Analysebericht erstellen</button>
       </form>
     </div>
   </div>
