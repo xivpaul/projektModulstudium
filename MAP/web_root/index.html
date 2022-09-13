@@ -84,7 +84,14 @@
         </select>
         <input type="submit" value="OK" />
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <font color=f7c09e> DOWNLOADLINK </font>
+        <p style="display:inline;" id="id_download">DOWNLOADLINK</p>
+        <!-- Textfarbe des Hintergrunds "upload" einlesen und den Platzhaltertext 
+          fuer Download in der gleichen Farbe darstellen, sodass dieser nicht sichtbar ist-->
+        <script>
+          var uploadObj = document.getElementById("upload");
+          let color = window.getComputedStyle(uploadObj).backgroundColor;
+          document.getElementById("id_download").style.color = color;
+        </script>
         <br>
         <h3>USERTEXT</h3> <!-- Hier wird der Text angezeigt welche Datei gerade geladen ist-->
         METADATEN
