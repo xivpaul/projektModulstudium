@@ -317,8 +317,9 @@ std::string Server::handleMetadataRequest() {
 std::string Server::handleAnalysisRequest() {
   if (csv.columns.size() < 1) {
     std::string redirection = "<head><meta http-equiv=\"Refresh\" content=\"4; "
-                              "URL=/\"></head><body>Bitte Messreihe "
-                              "waehlen! Sie werden gleich wieder "
+                              "URL=/\"></head><body><h2>Hinweis</h2>Bitte "
+                              "waehlen Sie zuerst eine Messdatei aus! <br> "
+                              "Sie werden gleich wieder "
                               "zur Hauptseite gebracht.</body>";
     return redirection;
   }
@@ -347,10 +348,11 @@ void Server::handleDownloadRequest() {
 
 std::string Server::handleVisualizationRequest() {
   if (csv.columns.size() < 1) {
-    std::string redirection = "<head><meta http-equiv=\"Refresh\" content=\"4; "
-                              "URL=/\"></head><body>Bitte Messreihe "
-                              "waehlen! Sie werden gleich wieder "
-                              "zur Hauptseite gebracht.</body>";
+    std::string redirection =
+        "<head><meta http-equiv=\"Refresh\" content=\"4; "
+        "URL=/\"></head><body><h2>Hinweis</h2>Bitte waehlen Sie zuerst eine "
+        "Messdatei aus! <br> Sie werden gleich wieder "
+        "zur Hauptseite gebracht.</body>";
     return redirection;
   }
   return plotObj.plot(&csv, DB_DIR, Server::getInstance()->chosen_file);

@@ -109,7 +109,8 @@ table, th, td {\
 <h2> Uebersicht zur Messdatenbewertung</ h2>\
                                     <table>\
 " + createAnalysisTableString(csv) + "\
-</table>\
+</table>" + createAnalysisReportPlot(csv) +
+                                         "\
   <br>\
   <br>\
   <br>\
@@ -165,6 +166,52 @@ std::string Visualization::createTransformationHistoryTableString() {
 
   return HTMLTableString;
 }
+
+std::string Visualization::createAnalysisReportPlot(CSV *csv) {
+
+  std::string xColumn = csv->columns[0].toString();
+
+  std::string traces;
+  std::string data = "var data = [";
+  for (int i = 1; i < csv->columns.size(); i++) {
+    if (not csv->columns[i].isType(NUMBER)) {
+      continue;
+    } else {
+      if (i > 1 && i < csv->columns.size()) {
+        data += ",";
+      }
+    }
+    std::string yColumn = csv->columns[i].toString();
+    traces += "var " + csv->columns[i].name + " = {x:" + xColumn +
+              ",y:" + yColumn + ",\
+  mode: 'lines',\
+  name: '" + csv->columns[i].name +
+              "'\
+};";
+    data += csv->columns[i].name;
+  }
+
+  data += "];";
+  std::string visualizationHttp =
+      "<head><script src='plotly-2.12.1.min.js'></script> \
+                                    </head><body><div id='myDiv'></div></body> \
+                                    <script>" +
+      traces + data + "\
+                                        var layout = {\
+                                        width: 1000, \
+                                        showlegend: true,\
+                                        autosize: false, \
+                                         xaxis: {\
+                                          title: 'Index Messpunkte'},\
+                                         yaxis: {\
+                                          title: 'Messwert'}\
+                                        }; \
+                                        Plotly.newPlot('myDiv', data,layout); \
+                                    </script>";
+
+  return visualizationHttp;
+}
+
 // Quelle Table erstellen: https://www.w3schools.com/html/html_tables.asp
 
 // Quelle für Print/speichern https://www.csestack.org/code-print-save-html-pdf/

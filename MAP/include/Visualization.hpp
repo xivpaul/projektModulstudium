@@ -14,6 +14,7 @@ public:
   Visualization();
   std::string xColumn;
   std::string yColumn;
+  std::string createAnalysisReportPlot(CSV *csv);
   std::string
   setXColumnOptions(CSV *csv, std::string loaded_file,
                     int chosen_columns[2]); // diese Methoden dürfen nicht
