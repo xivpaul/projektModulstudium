@@ -27,60 +27,31 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
     if (mg_http_match_uri(hm, "/upload")) {
       struct mg_http_part part;
       size_t ofs = 0;
+      bool already_there = false;
+
       while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
 
         std::string filename(part.filename.ptr, part.filename.len);
         std::string data(part.body.ptr, part.body.len);
 
         // Vorhandene Daten unter Verzeichnis "DB_DIR" suchen:
-        bool already_there = false;
-        auto file_to_load = filename;
+
         const std::filesystem::path database_path{DB_DIR};
         for (auto const &dir_entry :
              std::filesystem::directory_iterator{database_path}) {
-          std::string filename = dir_entry.path().filename().string();
+          std::string existing_filename = dir_entry.path().filename().string();
 
           // Dateinamen werden verglichen. Wenn Dateiname schon vorhanden wird
           // ein Flag gesetzt.
-          if (filename == file_to_load) {
+          if (existing_filename == filename) {
             already_there = true;
           }
         }
-        // Bei existierender Datei wird zum erneuten Hochladen aufgefordert und
-        // an die Startseite zurückgegeben.
-        if (already_there) {
-          std::string redirection =
-              "<head><meta http-equiv=\"Refresh\" content=\"6; "
-              "URL=/\"></head><body><h2>Upload fehlgeschlagen!</h2>"
-              "Datei existiert bereits!<br>"
-              "Bitte Datei umbenennen und erneut hochladen.<br>"
-              "Sie werden gleich wieder zur Hauptseite gebracht.</body>";
-          mg_http_reply(c, 303, "", redirection.c_str());
-        } else if (filename.length() > 0) {
-          Server::getInstance()->chosen_file = filename;
-          Server::getInstance()->handleCSVFileUpload(data);
-
-          // Die gewaehlte Datei wird direkt eingelesen, damit verfuegbare
-          // Spaltennamen angezeigt werden koennen:
-          csv.read(DB_DIR + Server::getInstance()->chosen_file);
-
-          // Weboberflaeche wird nach 2s neu geladen und aktualisiert:
-          std::string redirection =
-              "<head><meta http-equiv=\"Refresh\" content=\"4; "
-              "URL=/\"></head><body><h2>Erfolg!</h2>Upload erfolgreich! Sie "
-              "werden gleich "
-              "wieder "
-              "zur Hauptseite gebracht.</body>";
-          mg_http_reply(c, 303, "", redirection.c_str());
-        } else {
-          std::string redirection =
-              "<head><meta http-equiv=\"Refresh\" content=\"6; "
-              "URL=/\"></head><body><h2>Fehler!</h2>\
-              Bitte waehlen Sie zuerst eine Datei aus, die hochgeladen werden soll! <br>\
-              Sie werden gleich wieder zur Hauptseite gebracht.</body>";
-          mg_http_reply(c, 303, "", redirection.c_str());
-        }
+        std::string result = Server::getInstance()->handleCSVFileUpload(
+            data, already_there, filename);
+        mg_http_reply(c, 200, "", result.c_str());
       }
+
     } else if (mg_http_match_uri(hm, "/visualize")) {
       std::string result = Server::getInstance()->handleVisualizationRequest();
       mg_http_reply(c, 200, "", result.c_str());
@@ -162,11 +133,8 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
       std::string redirection;
       // Benutzernachricht, wenn noch keine Messdatei ausgewaehlt wurde
       if (csv.columns.size() < 1) {
-        redirection = "<head><meta http-equiv=\"Refresh\" content=\"5; "
-                      "URL=/\"></head><body><h2>Hinweis</h2>Bitte waehlen Sie "
-                      "zunaechst eine "
-                      "Messdatei aus!<br> Sie werden gleich wieder "
-                      "zur Hauptseite gebracht.</body>";
+        std::string redirection = Server::getInstance()->createInfoMessage(
+            "Bitte wählen Sie zuerst eine Messdatei aus!", "danger");
         mg_http_reply(c, 200, "", redirection.c_str());
       } else {
         while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
@@ -180,13 +148,10 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
                           "URL=/\"></head>";
             mg_http_reply(c, 200, "", redirection.c_str());
           } catch (...) {
-            std::string redirection =
-                "<head><meta http-equiv=\"Refresh\" content=\"4; "
-                "URL=/\"></head><body><h2>Fehler!</h2>Transformationswert darf "
-                "nicht leer sein "
-                "und "
-                "keine Buchstaben enthalten!<br> Sie werden gleich wieder "
-                "zur Hauptseite gebracht.</body>";
+            std::string redirection = Server::getInstance()->createInfoMessage(
+                "Transformationswert darf nicht leer sein und keine Buchstaben "
+                "enthalten!",
+                "danger");
             mg_http_reply(c, 200, "", redirection.c_str());
           }
         }
@@ -221,7 +186,7 @@ std::string Server::handleStartPageRequest() {
   // nochmals modifiziert (hier zusaetzlich uebergabe des zu modifizierenden
   // Stringobjekts "httpStartPageString"):
   httpStartPageString = Server::modifyHTMLText(
-      "USERTEXT", "Gewaehlte Messdatei: " + loaded_file, httpStartPageString);
+      "USERTEXT", "Gewählte Messdatei: " + loaded_file, httpStartPageString);
 
   // Metadaten
   httpStartPageString = Server::modifyHTMLText(
@@ -249,8 +214,10 @@ std::string Server::handleStartPageRequest() {
                                  "download=" +
                                  Server::getInstance()->chosen_file +
                                  ">Gewählte Messdatei herunterladen</a>";
-    httpStartPageString = Server::modifyHTMLText("DOWNLOADLINK", DownloadString,
-                                                 httpStartPageString);
+    std::string Placeholder_DownloadLink =
+        "<p style=\"display:none;\" id=\"id_download\">DOWNLOADLINK</p>";
+    httpStartPageString = Server::modifyHTMLText(
+        Placeholder_DownloadLink, DownloadString, httpStartPageString);
   }
 
   // zwischengespeicherten HTML - String aktualisieren:
@@ -297,12 +264,38 @@ std::string Server::modifyHTMLText(std::string Schlagwort,
  *
  * @param data
  */
-void Server::handleCSVFileUpload(std::string data) {
+std::string Server::handleCSVFileUpload(std::string data, bool already_there,
+                                        std::string filename) {
+  std::string redirection;
+  // Bei existierender Datei wird zum erneuten Hochladen aufgefordert und
+  // an die Startseite zurückgegeben.
+  if (already_there) {
+    redirection = Server::getInstance()->createInfoMessage(
+        "Die Datei existiert bereits in der Datenbank!", "danger");
+    return redirection;
 
-  std::ofstream outfile(DB_DIR + Server::getInstance()->chosen_file);
-  outfile << data;
-  outfile.close();
-  csv.createMetadata(DB_DIR + Server::getInstance()->chosen_file);
+  } else if (filename.length() < 1) {
+    redirection = Server::getInstance()->createInfoMessage(
+        "Bitte wählen Sie zuerst eine Datei aus, die hochgeladen werden "
+        "soll!",
+        "danger");
+    return redirection;
+  } else {
+    Server::getInstance()->chosen_file = filename;
+
+    // Die gewaehlte Datei wird direkt eingelesen, damit verfuegbare
+    // Spaltennamen angezeigt werden koennen:
+    csv.read(DB_DIR + filename);
+
+    std::ofstream outfile(DB_DIR + Server::getInstance()->chosen_file);
+    outfile << data;
+    outfile.close();
+    csv.createMetadata(DB_DIR + Server::getInstance()->chosen_file);
+
+    redirection = Server::getInstance()->createInfoMessage(
+        "Upload erfolgreich!", "success");
+    return redirection;
+  }
 }
 
 std::string Server::handleMetadataRequest() {
@@ -316,11 +309,8 @@ std::string Server::handleMetadataRequest() {
 
 std::string Server::handleAnalysisRequest() {
   if (csv.columns.size() < 1) {
-    std::string redirection = "<head><meta http-equiv=\"Refresh\" content=\"4; "
-                              "URL=/\"></head><body><h2>Hinweis</h2>Bitte "
-                              "waehlen Sie zuerst eine Messdatei aus! <br> "
-                              "Sie werden gleich wieder "
-                              "zur Hauptseite gebracht.</body>";
+    std::string redirection = Server::getInstance()->createInfoMessage(
+        "Bitte wählen Sie zuerst eine Messdatei aus!", "danger");
     return redirection;
   }
   csv.buildAnalysisMatrix();
@@ -348,14 +338,28 @@ void Server::handleDownloadRequest() {
 
 std::string Server::handleVisualizationRequest() {
   if (csv.columns.size() < 1) {
-    std::string redirection =
-        "<head><meta http-equiv=\"Refresh\" content=\"4; "
-        "URL=/\"></head><body><h2>Hinweis</h2>Bitte waehlen Sie zuerst eine "
-        "Messdatei aus! <br> Sie werden gleich wieder "
-        "zur Hauptseite gebracht.</body>";
+    std::string redirection = Server::getInstance()->createInfoMessage(
+        "Bitte wählen Sie zuerst eine Messdatei aus!", "danger");
     return redirection;
   }
   return plotObj.plot(&csv, DB_DIR, Server::getInstance()->chosen_file);
+}
+
+std::string Server::createInfoMessage(std::string infotext,
+                                      std::string InfoStatus) {
+  // Quelle: aler box
+  // https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_alerts_fade&stacked=h
+  std::string infoAlert = "<div class=\"alert alert-" + InfoStatus +
+                          " alert-dismissible fade in\">\
+      <a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\
+      <strong>Hinweis!</strong> " +
+                          infotext + "</div>";
+  std::string PlaceHolder_InfoMessage =
+      "<p style=\"display:none;\">INFOMESSAGE</p>";
+  std::string redirection = Server::getInstance()->modifyHTMLText(
+      PlaceHolder_InfoMessage, infoAlert,
+      Server::getInstance()->currentHTMLString);
+  return redirection;
 }
 
 void Server::start() {

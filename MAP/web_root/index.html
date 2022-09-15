@@ -6,7 +6,10 @@
   <meta charset="utf-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <!--Quelle: aler box https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_alerts_fade&stacked=h-->
   <style>
     #container {
       margin-right: auto;
@@ -31,7 +34,7 @@
       border-radius: .5em;
       padding: 2em;
       float: left;
-      width: 42%;
+      width: 50%;
 
     }
 
@@ -40,7 +43,7 @@
       border-radius: .5em;
       padding: 2em;
       float: right;
-      width: 42%;
+      width: 50%;
       flex: 1;
     }
 
@@ -63,37 +66,30 @@
 
 <body>
   <div id="container">
+    <p style="display:none;">INFOMESSAGE</p>
     <div id="info">
       <h1>Messdaten Analyse Plattform</h1>
     </div>
-
     <div id="upload">
       <h2>Messdaten hochladen</h2>
       <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file1" />
+        <input type="file" name="file1" style="display:inline;" />
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <button type="submit">Hochladen</button>
+        <button style="display:inline;" type="submit">Hochladen</button>
       </form>
       <br>
       <hr>
-      <h2>Messdatei aus Serverdatenbank waehlen</h2>
+      <h2>Messdatei aus Serverdatenbank wählen</h2>
       <form action="/load" method="post" enctype="multipart/form-data">
-        <label for="Messdate">Messdatei waehlen:</label>
+        <label for="Messdatei">Messdatei wählen:</label>
         <select name="Messdatei" id="id_messdatei">
           OPTIONSLISTE
         </select>
         <input type="submit" value="OK" />
         &nbsp;&nbsp;&nbsp;&nbsp;
-        <p style="display:inline;" id="id_download">DOWNLOADLINK</p>
-        <!-- Textfarbe des Hintergrunds "upload" einlesen und den Platzhaltertext 
-          fuer Download in der gleichen Farbe darstellen, sodass dieser nicht sichtbar ist-->
-        <script>
-          var uploadObj = document.getElementById("upload");
-          let color = window.getComputedStyle(uploadObj).backgroundColor;
-          document.getElementById("id_download").style.color = color;
-        </script>
+        <p style="display:none;" id="id_download">DOWNLOADLINK</p>
         <br>
-        <h3>USERTEXT</h3> <!-- Hier wird der Text angezeigt welche Datei gerade geladen ist-->
+        <h4>USERTEXT</h4> <!-- Hier wird der Text angezeigt welche Datei gerade geladen ist-->
         METADATEN
       </form>
     </div> <!-- Bereich Upload Ende -->
@@ -101,14 +97,14 @@
       <div id="analyze">
         <!-- Bereich Analyse: -->
         <h2>Messdatei transformieren</h2>
-        <h3>Zu transformierende Spalte waehlen:</h3>
+        <h4>Zu transformierende Spalte wählen:</h4>
         <form action="/transformColumn" method="post" enctype="multipart/form-data">
           <label for="Transformationsspalte"></label>
           <select name="transfspalte" id="id_transfspalte" onchange="submit()">
             TRANSFORMATIONSSPALTE
           </select>
         </form>
-        <h3>Operation waehlen:</h3>
+        <h4>Operation wählen:</h4>
         <form action="/setOperation" method="post" enctype="multipart/form-data">
           <label for="Operation"></label>
           <select name="oper" id="id_oper" onchange="submit()">
@@ -116,7 +112,7 @@
           </select>
         </form>
 
-        <h3>Wert eingeben:</h3>
+        <h4>Wert eingeben:</h4>
         <form action="/setTransformationValue" method="post" enctype="multipart/form-data">
           EINGABEWERT
           <button type="submit">Transformieren</button>
