@@ -137,6 +137,40 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
       redirection = "<head><meta http-equiv=\"Refresh\" content=\"0; "
                     "URL=/\"></head>";
       mg_http_reply(c, 200, "", redirection.c_str());
+    } else if (mg_http_match_uri(hm, "/setFilterValue")) {
+      struct mg_http_part part;
+      size_t ofs = 0;
+      std::string redirection;
+      // Benutzernachricht, wenn noch keine Messdatei ausgewaehlt wurde
+      while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
+        std::string received_data(part.body.ptr);
+        try {
+          int Filtersize = stoi(received_data.substr(0, (int)part.body.len));
+          if (stoi(received_data.substr(0, (int)part.body.len)) % 2 == 0) {
+            std::string redirection =
+                "<head><meta http-equiv=\"Refresh\" content=\"3; "
+                "URL=/visualize\"></head><body>Filterwert muss eine ungerade "
+                "Zahl "
+                "sein!\n Sie werden gleich wieder "
+                "zum Plot Fenster gebracht.</body>";
+            mg_http_reply(c, 200, "", redirection.c_str());
+          } else {
+            plotObj.filtersize = Filtersize;
+          };
+          std::string redirection =
+              "<head><meta http-equiv=\"Refresh\" content=\"0; "
+              "URL=/visualize\"></head>";
+          mg_http_reply(c, 200, "", redirection.c_str());
+        } catch (...) {
+          std::string redirection =
+              "<head><meta http-equiv=\"Refresh\" content=\"3; "
+              "URL=/\"></head><body>Filterwert darf nicht leer sein "
+              "und "
+              "keine Buchstaben enthalten!\n Sie werden gleich wieder "
+              "zur Hauptseite gebracht.</body>";
+          mg_http_reply(c, 200, "", redirection.c_str());
+        }
+      }
     } else {
       struct mg_http_serve_opts opts = {.root_dir = WEB_ROOT.c_str()};
       mg_http_serve_dir(c, (struct mg_http_message *)ev_data, &opts);
