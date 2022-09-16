@@ -21,35 +21,18 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
                           void *fn_data) {
   if (ev == MG_EV_HTTP_MSG) {
     struct mg_http_message *hm = (struct mg_http_message *)ev_data;
-    // MG_INFO(("New request to: [%.*s], body size: %lu", (int) hm->uri.len,
-    // hm->uri.ptr, (unsigned long) hm->body.len));
 
     if (mg_http_match_uri(hm, "/upload")) {
       struct mg_http_part part;
       size_t ofs = 0;
-      bool already_there = false;
 
       while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
 
         std::string filename(part.filename.ptr, part.filename.len);
         std::string data(part.body.ptr, part.body.len);
-
-        // Vorhandene Daten unter Verzeichnis "DB_DIR" suchen:
-
-        const std::filesystem::path database_path{DB_DIR};
-        for (auto const &dir_entry :
-             std::filesystem::directory_iterator{database_path}) {
-          std::string existing_filename = dir_entry.path().filename().string();
-
-          // Dateinamen werden verglichen. Wenn Dateiname schon vorhanden wird
-          // ein Flag gesetzt.
-          if (existing_filename == filename) {
-            already_there = true;
-          }
-        }
-        std::string result = Server::getInstance()->handleCSVFileUpload(
-            data, already_there, filename);
-        mg_http_reply(c, 200, "", result.c_str());
+        std::string redirection =
+            Server::getInstance()->handleCSVFileUpload(data, filename);
+        mg_http_reply(c, 200, "", redirection.c_str());
       }
 
     } else if (mg_http_match_uri(hm, "/visualize")) {
@@ -133,9 +116,8 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
       std::string redirection;
       // Benutzernachricht, wenn noch keine Messdatei ausgewaehlt wurde
       if (csv.columns.size() < 1) {
-        std::string redirection = Server::getInstance()->createInfoMessage(
+        Server::getInstance()->createInfoMessage(
             "Bitte wählen Sie zuerst eine Messdatei aus!", "danger");
-        mg_http_reply(c, 200, "", redirection.c_str());
       } else {
         while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
           std::string received_data(part.body.ptr);
@@ -144,19 +126,17 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
                 stod(received_data.substr(0, (int)part.body.len));
 
             Server::getInstance()->handleTransformationRequest(TransformValue);
-            redirection = "<head><meta http-equiv=\"Refresh\" content=\"0; "
-                          "URL=/\"></head>";
-            mg_http_reply(c, 200, "", redirection.c_str());
           } catch (...) {
-            std::string redirection = Server::getInstance()->createInfoMessage(
+            Server::getInstance()->createInfoMessage(
                 "Transformationswert darf nicht leer sein und keine Buchstaben "
                 "enthalten!",
                 "danger");
-            mg_http_reply(c, 200, "", redirection.c_str());
           }
         }
       }
-
+      redirection = "<head><meta http-equiv=\"Refresh\" content=\"0; "
+                    "URL=/\"></head>";
+      mg_http_reply(c, 200, "", redirection.c_str());
     } else {
       struct mg_http_serve_opts opts = {.root_dir = WEB_ROOT.c_str()};
       mg_http_serve_dir(c, (struct mg_http_message *)ev_data, &opts);
@@ -219,6 +199,14 @@ std::string Server::handleStartPageRequest() {
     httpStartPageString = Server::modifyHTMLText(
         Placeholder_DownloadLink, DownloadString, httpStartPageString);
   }
+  if (Server::getInstance()->infoAlert != "None") {
+    std::string PlaceHolder_InfoMessage =
+        "<p style=\"display:none;\">INFOMESSAGE</p>";
+    httpStartPageString = Server::getInstance()->modifyHTMLText(
+        PlaceHolder_InfoMessage, Server::getInstance()->infoAlert,
+        httpStartPageString);
+    Server::getInstance()->infoAlert = "None";
+  }
 
   // zwischengespeicherten HTML - String aktualisieren:
   Server::getInstance()->currentHTMLString = httpStartPageString;
@@ -264,38 +252,51 @@ std::string Server::modifyHTMLText(std::string Schlagwort,
  *
  * @param data
  */
-std::string Server::handleCSVFileUpload(std::string data, bool already_there,
+std::string Server::handleCSVFileUpload(std::string data,
                                         std::string filename) {
-  std::string redirection;
+  bool already_there = false;
+  // Vorhandene Daten unter Verzeichnis "DB_DIR" suchen:
+  const std::filesystem::path database_path{DB_DIR};
+  for (auto const &dir_entry :
+       std::filesystem::directory_iterator{database_path}) {
+    std::string existing_filename = dir_entry.path().filename().string();
+
+    // Dateinamen werden verglichen. Wenn Dateiname schon vorhanden wird
+    // ein Flag gesetzt.
+    if (existing_filename == filename) {
+      already_there = true;
+    }
+  }
   // Bei existierender Datei wird zum erneuten Hochladen aufgefordert und
   // an die Startseite zurückgegeben.
   if (already_there) {
-    redirection = Server::getInstance()->createInfoMessage(
+    Server::getInstance()->createInfoMessage(
         "Die Datei existiert bereits in der Datenbank!", "danger");
-    return redirection;
 
   } else if (filename.length() < 1) {
-    redirection = Server::getInstance()->createInfoMessage(
+    Server::getInstance()->createInfoMessage(
         "Bitte wählen Sie zuerst eine Datei aus, die hochgeladen werden "
         "soll!",
         "danger");
-    return redirection;
   } else {
+    Server::getInstance()->createInfoMessage("Upload erfolgreich!", "success");
     Server::getInstance()->chosen_file = filename;
-
-    // Die gewaehlte Datei wird direkt eingelesen, damit verfuegbare
-    // Spaltennamen angezeigt werden koennen:
-    csv.read(DB_DIR + filename);
 
     std::ofstream outfile(DB_DIR + Server::getInstance()->chosen_file);
     outfile << data;
     outfile.close();
     csv.createMetadata(DB_DIR + Server::getInstance()->chosen_file);
 
-    redirection = Server::getInstance()->createInfoMessage(
-        "Upload erfolgreich!", "success");
-    return redirection;
+    // Die gewaehlte Datei wird direkt eingelesen, damit verfuegbare
+    // Spaltennamen angezeigt werden koennen:
+    std::string new_databank_file = DB_DIR + filename;
+    csv.read(new_databank_file);
+    // Transformationstabelle in Anzeige leeren:
+    plotObj.clearHistory();
   }
+  std::string redirection = "<head><meta http-equiv=\"Refresh\" content=\"0; "
+                            "URL=/\"></head>";
+  return redirection;
 }
 
 std::string Server::handleMetadataRequest() {
@@ -309,12 +310,15 @@ std::string Server::handleMetadataRequest() {
 
 std::string Server::handleAnalysisRequest() {
   if (csv.columns.size() < 1) {
-    std::string redirection = Server::getInstance()->createInfoMessage(
+    Server::getInstance()->createInfoMessage(
         "Bitte wählen Sie zuerst eine Messdatei aus!", "danger");
+    std::string redirection = "<head><meta http-equiv=\"Refresh\" content=\"0; "
+                              "URL=/\"></head>";
     return redirection;
+  } else {
+    csv.buildAnalysisMatrix();
+    return plotObj.showAnalysis(&csv, Server::getInstance()->chosen_file);
   }
-  csv.buildAnalysisMatrix();
-  return plotObj.showAnalysis(&csv, Server::getInstance()->chosen_file);
 }
 
 void Server::handleTransformationRequest(double TransformValue) {
@@ -330,7 +334,10 @@ void Server::handleTransformationRequest(double TransformValue) {
   plotObj.trans_ValueHistory.push_back(std::to_string(csv.TransformValue));
   plotObj.trans_OperationHistory.push_back(csv.TransformOperation);
   plotObj.Transformationszaehler += 1;
+  Server::getInstance()->createInfoMessage("Transformation erfolgreich!",
+                                           "success");
 }
+
 void Server::handleDownloadRequest() {
   csv.downloadFileFromServer(WEB_ROOT, DB_DIR,
                              Server::getInstance()->chosen_file);
@@ -338,28 +345,24 @@ void Server::handleDownloadRequest() {
 
 std::string Server::handleVisualizationRequest() {
   if (csv.columns.size() < 1) {
-    std::string redirection = Server::getInstance()->createInfoMessage(
+    Server::getInstance()->createInfoMessage(
         "Bitte wählen Sie zuerst eine Messdatei aus!", "danger");
+    std::string redirection = "<head><meta http-equiv=\"Refresh\" content=\"0; "
+                              "URL=/\"></head>";
     return redirection;
+  } else {
+    return plotObj.plot(&csv, DB_DIR, Server::getInstance()->chosen_file);
   }
-  return plotObj.plot(&csv, DB_DIR, Server::getInstance()->chosen_file);
 }
 
-std::string Server::createInfoMessage(std::string infotext,
-                                      std::string InfoStatus) {
+void Server::createInfoMessage(std::string infotext, std::string InfoStatus) {
   // Quelle: aler box
   // https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_alerts_fade&stacked=h
-  std::string infoAlert = "<div class=\"alert alert-" + InfoStatus +
-                          " alert-dismissible fade in\">\
+  Server::getInstance()->infoAlert = "<div class=\"alert alert-" + InfoStatus +
+                                     " alert-dismissible fade in\">\
       <a href=\"#\" class=\"close\" data-dismiss=\"alert\" aria-label=\"close\">&times;</a>\
-      <strong>Hinweis!</strong> " +
-                          infotext + "</div>";
-  std::string PlaceHolder_InfoMessage =
-      "<p style=\"display:none;\">INFOMESSAGE</p>";
-  std::string redirection = Server::getInstance()->modifyHTMLText(
-      PlaceHolder_InfoMessage, infoAlert,
-      Server::getInstance()->currentHTMLString);
-  return redirection;
+      <strong>Hinweis!</strong> " + infotext +
+                                     "</div>";
 }
 
 void Server::start() {

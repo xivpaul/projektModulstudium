@@ -19,16 +19,16 @@ private:
   Server();
 
 public:
+  std::string infoAlert = "None";
   std::string currentHTMLString;
-  std::string createInfoMessage(std::string infotext, std::string InfoStatus);
+  void createInfoMessage(std::string infotext, std::string InfoStatus);
   static Server *getInstance();
   std::string chosen_file = "Keine Datei ausgewaehlt";
   Server(Server &other) = delete;          // C++11 prevent cloning
   void operator=(const Server &) = delete; // C++11 prevent assignments
   std::string modifyHTMLText(std::string Schlagwort, std::string Ersatztext,
                              std::string Stringobject = "empty");
-  std::string handleCSVFileUpload(std::string data, bool already_there,
-                                  std::string filename);
+  std::string handleCSVFileUpload(std::string data, std::string filename);
   std::string handleMetadataRequest();
   std::string handleAnalysisRequest();
   std::string handleVisualizationRequest();
