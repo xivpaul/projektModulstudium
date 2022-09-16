@@ -28,15 +28,16 @@ cd projekt
 
 Verwendete Tools innerhalb des Projekts
 
-* Git + Git Extensions <img src="\MAP\docu\Bild1.png" alt="image-20220916154000242" style="zoom:25%;" />
+* Git + Git Extensions <img src="./MAP/docu/Bild1.png" width="15" />
 
-* Visual Studio Code <img src="\MAP\docu\Bild2.png" alt="image-20220916154028551" style="zoom:8%;" />
+* Visual Studio Code <img src="./MAP/docu/Bild2.png" width="20" />
 
   
 
 # Anwendung
-
-<img src="\MAP\docu\Bild3.png" alt="image-20220916154028551" style="zoom:60%;" />
+<p align="center">
+    <img src="./MAP/docu/Bild3.PNG" width="700" />
+</p>
 
 
 
