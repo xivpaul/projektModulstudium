@@ -317,6 +317,13 @@ std::string Server::handleCSVFileUpload(std::string data,
     Server::getInstance()->chosen_file = filename;
 
     std::ofstream outfile(DB_DIR + Server::getInstance()->chosen_file);
+
+    // Ersetze doppelte Zeilenumbrueche mit einfachen Zeilenumbrüchen im CSV
+    long index;
+    while ((index = data.find("\r\n")) != std::string::npos) {
+      data.replace(index, 2, "\n");
+    }
+
     outfile << data;
     outfile.close();
     csv.createMetadata(DB_DIR + Server::getInstance()->chosen_file);
