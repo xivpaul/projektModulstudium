@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<TestonaObject id="c0">
+    <!--Created by TESTONA Light 6.7.0-->
+    <Tree id="c1" name="MAP_Tests_V1.testona" root="c2">
+        <Composition height="28" id="c2" name="MAP_Tests_Transformieren" style="background-color:#FFFFFF; color:#000000; font-size:9px; font-family:'Segoe UI'; text-align:Center; transform:none" width="199" x="812" y="32">
+            <Composition height="26" id="c17" name="IN" width="40" x="499" y="92">
+                <Classification height="22" id="c53" name="Datei Auswahl" style="text-align:Center; transform:none" width="113" x="33" y="150">
+                    <Class height="20" id="c41" name="CSV" width="43" x="-4" y="204"/>
+                    <Class height="20" id="c32" name="anderer Dateityp" width="128" x="55" y="204"/>
+                </Classification>
+                <Classification height="22" id="c59" name="zu transformierende Spalte" width="197" x="199" y="150">
+                    <Class height="20" id="c88" name="unverändert" width="96" x="203" y="204"/>
+                    <Class height="20" id="c85" name="geändert" width="77" x="315" y="204"/>
+                </Classification>
+                <Classification height="22" id="c29" name="Transformation Operation" style="text-align:Center; transform:none" width="190" x="524" y="150">
+                    <Class height="20" id="c50" name="addieren" width="76" x="412" y="204"/>
+                    <Class height="20" id="c35" name="subtrahieren" width="99" x="504" y="204"/>
+                    <Class height="20" id="c65" name="multiplizieren" width="108" x="619" y="204"/>
+                    <Class height="20" id="c68" name="dividieren" width="83" x="743" y="204"/>
+                </Classification>
+                <Classification height="22" id="c62" name="Wert" width="50" x="956" y="150">
+                    <Class height="20" id="c91" name="int" width="40" x="842" y="204"/>
+                    <Class height="20" id="c94" name="double" width="63" x="898" y="204"/>
+                    <Class height="20" id="c115" name="char/string" width="87" x="977" y="204"/>
+                    <Class height="20" id="c145" name="null" width="40" x="1080" y="204"/>
+                </Classification>
+            </Composition>
+            <Composition height="26" id="c20" name="OUT" width="51" x="1274" y="92">
+                <Classification height="22" id="c97" name="Anzahl der Dateien in Datenbank" width="238" x="1136" y="150">
+                    <Class height="20" id="c100" name="größer" width="61" x="1188" y="204"/>
+                    <Class height="20" id="c103" name="gleich" width="57" x="1265" y="204"/>
+                </Classification>
+                <Classification height="22" id="c47" name="Result" style="text-align:Center; transform:none" width="59" x="1405" y="150">
+                    <Class height="20" id="c23" name="Erfolg" width="56" x="1370" y="204"/>
+                    <Class height="20" id="c44" name="Fehler" width="57" x="1442" y="204"/>
+                </Classification>
+            </Composition>
+        </Composition>
+        <Tag id="c7" type="Description">
+            <Content key="textcontent" value="Durchteilen mit 0 soll zu einer ZERO DIVISION ERROR führen--&gt; keine Datei wurde erstellt und Fehler wird angezeigt? "/>
+        </Tag>
+    </Tree>
+    <TestGroup id="c3" name="">
+        <TestCase id="c71" name="Testcase 1 / mit einem int Wert addieren">
+            <Marks true="c41 c50 c23 c88 c91 c100 "/>
+            <Tag id="c73" type="Description">
+                <Content key="textcontent" value="Testcase 1: zu transformierende Spalte nicht geändert und mit einem int Wert addieret. "/>
+            </Tag>
+        </TestCase>
+        <TestCase id="c78" name="Testcase 2 / tranformierende Spalte ändern">
+            <Marks true="c41 c35 c85 c91 c103 c23 "/>
+            <Tag id="c80" type="Description">
+                <Content key="textcontent" value="Testcase 2 : zu transformierende Spalte ändern und mit int Wert subtrahieren."/>
+            </Tag>
+        </TestCase>
+        <TestCase id="c118" name="Testcase 3 / mit einem double Wert multiplizieren">
+            <Marks true="c41 c88 c65 c94 c100 c23 "/>
+            <Tag id="c120" type="Description">
+                <Content key="textcontent" value="Testcase 3: mit Double Wert multiplizieren.&#13;&#10;"/>
+            </Tag>
+        </TestCase>
+        <TestCase id="c124" name="Testcase 4 / durch 0 dividieren">
+            <Marks true="c41 c85 c44 c103 c145 c68 "/>
+            <Tag id="c126" type="Description">
+                <Content key="textcontent" value="Testcase 4: zu ransformierende Spalte ändern und durch 0 dividieren. Fehler erwartet."/>
+            </Tag>
+        </TestCase>
+        <TestCase id="c154" name="Testcase 5 / char-string als Wert eingeben">
+            <Marks true="c41 c88 c50 c115 c103 c44 "/>
+            <Tag id="c156" type="Description">
+                <Content key="textcontent" value="Testcase 5: char/string Wert addieren. Fehler erwartet.&#13;&#10;"/>
+            </Tag>
+        </TestCase>
+        <TestCase id="c164" name="Testcase 6 / anderer Dateityp auswählen">
+            <Marks true="c32 c85 c35 c94 c103 c44 "/>
+            <Tag id="c166" type="Description">
+                <Content key="textcontent" value="Testcase 6: Dateityp ist nicht CSV. Fehler erwartet."/>
+            </Tag>
+        </TestCase>
+    </TestGroup>
+</TestonaObject>
