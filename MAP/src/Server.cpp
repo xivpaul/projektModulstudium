@@ -71,6 +71,12 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
       while ((ofs = mg_http_next_multipart(hm->body, ofs, &part)) > 0) {
         std::string filename_server(part.body.ptr);
         plotstyle = filename_server.substr(0, (int)part.body.len);
+        if (plotObj.plotstyle != plotstyle and plotstyle == "filteractive") {
+          Server::getInstance()->createInfoMessage(
+              "Bitte geben Sie einen ungeraden Wert zur Filterung der Rohdaten "
+              "ein.",
+              "success");
+        }
         plotObj.plotstyle = plotstyle;
       }
       std::string redirection =
@@ -146,13 +152,18 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
         std::string received_data(part.body.ptr);
         try {
           int Filtersize = stoi(received_data.substr(0, (int)part.body.len));
-          if (stoi(received_data.substr(0, (int)part.body.len)) % 2 == 0) {
-            std::string redirection =
-                "<head><meta http-equiv=\"Refresh\" content=\"3; "
-                "URL=/visualize\"></head><body>Filterwert muss eine ungerade "
-                "Zahl "
-                "sein!\n Sie werden gleich wieder "
-                "zum Plot Fenster gebracht.</body>";
+          if (Filtersize % 2 == 0 or Filtersize < 0) {
+            // std::string redirection =
+            //     "<head><meta http-equiv=\"Refresh\" content=\"3; "
+            //     "URL=/visualize\"></head><body>Filterwert muss eine ungerade
+            //     " "Zahl " "sein!\n Sie werden gleich wieder " "zum Plot
+            //     Fenster gebracht.</body>";
+            Server::getInstance()->createInfoMessage(
+                "Der Filterwert muss eine ungerade Zahl und positiv sein! Der "
+                "Wert wurde deshalb nicht geändert.",
+                "danger");
+            redirection = "<head><meta http-equiv=\"Refresh\" content=\"0; "
+                          "URL=/visualize\"></head>";
             mg_http_reply(c, 200, "", redirection.c_str());
           } else {
             plotObj.filtersize = Filtersize;
@@ -162,12 +173,18 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
               "URL=/visualize\"></head>";
           mg_http_reply(c, 200, "", redirection.c_str());
         } catch (...) {
-          std::string redirection =
-              "<head><meta http-equiv=\"Refresh\" content=\"3; "
-              "URL=/\"></head><body>Filterwert darf nicht leer sein "
-              "und "
-              "keine Buchstaben enthalten!\n Sie werden gleich wieder "
-              "zur Hauptseite gebracht.</body>";
+          // std::string redirection =
+          //     "<head><meta http-equiv=\"Refresh\" content=\"3; "
+          //     "URL=/\"></head><body>Filterwert darf nicht leer sein "
+          //     "und "
+          //     "keine Buchstaben enthalten!\n Sie werden gleich wieder "
+          //     "zur Hauptseite gebracht.</body>";
+          Server::getInstance()->createInfoMessage(
+              "Der Filterwert darf nicht leer sein und keine Buchstaben "
+              "enthalten!",
+              "danger");
+          redirection = "<head><meta http-equiv=\"Refresh\" content=\"0; "
+                        "URL=/visualize\"></head>";
           mg_http_reply(c, 200, "", redirection.c_str());
         }
       }
@@ -392,7 +409,13 @@ std::string Server::handleVisualizationRequest() {
                               "URL=/\"></head>";
     return redirection;
   } else {
-    return plotObj.plot(&csv, DB_DIR, Server::getInstance()->chosen_file);
+    std::string infoAlert = "";
+    if (Server::getInstance()->infoAlert != "None") {
+      infoAlert = Server::getInstance()->infoAlert;
+      Server::getInstance()->infoAlert = "None";
+    }
+    return plotObj.plot(&csv, DB_DIR, Server::getInstance()->chosen_file,
+                        infoAlert);
   }
 }
 
