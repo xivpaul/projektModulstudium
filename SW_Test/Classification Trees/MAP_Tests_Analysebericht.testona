@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<TestonaObject id="c0">
+    <!--Created by TESTONA Light 6.7.0-->
+    <Tree id="c1" name="MAP_Tests_V2.testona" root="c2">
+        <Composition height="28" id="c2" name="MAP_Tests_Analysebericht" style="background-color:#FFFFFF; color:#000000; font-size:9px; font-family:'Segoe UI'; text-align:Center; transform:none" width="197" x="685" y="32">
+            <Composition height="26" id="c26" name="IN" width="40" x="619" y="92">
+                <Classification height="22" id="c53" name="Datei Auswahl" width="113" x="470" y="150">
+                    <Class height="20" id="c59" name="CSV" width="43" x="472" y="204"/>
+                    <Class height="20" id="c88" name="keine" width="51" x="531" y="204"/>
+                </Classification>
+                <Classification height="22" id="c32" name="Analysebericht erstellen" width="176" x="633" y="150">
+                    <Class height="20" id="c41" name="Anzeigen" width="79" x="599" y="204"/>
+                    <Class height="20" id="c44" name="Druecken/Speichern" width="150" x="694" y="204"/>
+                </Classification>
+            </Composition>
+            <Composition height="26" id="c29" name="OUT" width="51" x="898" y="92">
+                <Classification height="22" id="c35" name="Result" width="59" x="894" y="150">
+                    <Class height="20" id="c47" name="Erfolg" width="56" x="859" y="204"/>
+                    <Class height="20" id="c50" name="Fehler" width="57" x="931" y="204"/>
+                </Classification>
+            </Composition>
+            <Tag id="c5" type="Description">
+                <Content key="textcontent" value="#     ID  Text&#13;&#10;18   18  Das System sollte dem Anwender die Möglichkeit bieten, einen erstellten Analysebericht zu speichern.&#13;&#10;&#13;&#10;20   20  Das System sollte dem Anwender die Möglichkeit bieten, ein Analysebericht zu erstellen.&#13;&#10;&#13;&#10;25   25  Das System sollte dem Anwender die Möglichkeit geben, den Analysebericht zu exportieren.&#13;&#10;&#13;&#10;27   27  Das System sollte dem Anwender die Möglichkeit geben, den Ablagepfad für den Analysebericht zu definieren.&#13;&#10;"/>
+            </Tag>
+        </Composition>
+    </Tree>
+    <TestGroup id="c3" name="">
+        <TestCase id="c71" name="Testcase 1 / csv Datei, Analysebericht anzeigen">
+            <Marks true="c59 c41 c47 "/>
+        </TestCase>
+        <TestCase id="c78" name="Testcase 2 / csv Date, Analysebericht drücken/speichern">
+            <Marks true="c59 c44 c47 "/>
+        </TestCase>
+        <TestCase id="c85" name="Testcase 3 / keine Datei auswählen">
+            <Marks true="c41 c50 c88 "/>
+        </TestCase>
+    </TestGroup>
+</TestonaObject>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<TestonaObject id="c0">
+    <!--Created by TESTONA Light 6.7.0-->
+    <Tree id="c1" name="MAP_Hochladen.testona" root="c2">
+        <Composition height="28" id="c2" name="MAP_Tests_Hochladen" style="background-color:#FFFFFF; color:#000000; font-size:9px; font-family:'Segoe UI'; text-align:Center; transform:none" width="172" x="622" y="32">
+            <Composition height="26" id="c17" name="IN" width="40" x="382" y="92">
+                <Classification height="22" id="c23" name="Datei Hochladen" width="131" x="225" y="150">
+                    <Class height="20" id="c41" name="CSV" width="43" x="158" y="204"/>
+                    <Class height="20" id="c44" name="anderer Dateityp" width="128" x="217" y="204"/>
+                    <Class height="20" id="c109" name="kein" width="44" x="361" y="204"/>
+                </Classification>
+                <Classification height="22" id="c112" name="Datenbank" width="91" x="488" y="150">
+                    <Class height="20" id="c115" name="vorhanden" width="87" x="421" y="204"/>
+                    <Class height="20" id="c118" name="nicht vorhanden" width="123" x="524" y="204"/>
+                </Classification>
+            </Composition>
+            <Composition height="26" id="c20" name="OUT" width="51" x="984" y="92">
+                <Classification height="22" id="c32" name="Auswahl Anzeige" width="131" x="720" y="150">
+                    <Class height="20" id="c47" name="Keine" width="53" x="663" y="204"/>
+                    <Class height="20" id="c50" name="ausgewählte Dateiname" width="176" x="732" y="204"/>
+                </Classification>
+                <Classification height="22" id="c35" name="Server" width="60" x="965" y="150">
+                    <Class height="20" id="c53" name="Down" width="56" x="924" y="204"/>
+                    <Class height="20" id="c56" name="Running" width="70" x="996" y="204"/>
+                </Classification>
+                <Classification height="22" id="c59" name="Anzahl der Dateien in Datenbank" width="238" x="1062" y="150">
+                    <Class height="20" id="c62" name="größer" width="61" x="1114" y="204"/>
+                    <Class height="20" id="c65" name="gleich" width="57" x="1191" y="204"/>
+                </Classification>
+            </Composition>
+            <Tag id="c67" type="Description">
+                <Content key="textcontent" value="#     ID  Text&#13;&#10;4     4    Das System muss Messdaten im CSV Format einlsesen.&#13;&#10;"/>
+            </Tag>
+        </Composition>
+    </Tree>
+    <TestGroup id="c3" name="">
+        <TestCase id="c124" name="Testcase 1 / csv Datei(in DB nicht vorhanden) hochladen">
+            <Marks true="c41 c118 c50 c56 c62 "/>
+        </TestCase>
+        <TestCase id="c132" name="Testcase 2 / csv Datei(in DB vorhanden) hochladen">
+            <Marks true="c41 c115 c47 c56 c65 "/>
+            <Tag id="c134" type="Description">
+                <Content key="textcontent" value="When selecting the file even if the file exist, the name of the file will be shown in the GUI until the Hochladen Button clicked then it will be removed and a warning that says the file already exist will show up."/>
+            </Tag>
+        </TestCase>
+        <TestCase id="c140" name="Testcase 3 / anderer Dateityp hochladen">
+            <Marks true="c44 c118 c47 c53 c65 "/>
+            <Tag id="c142" type="Description">
+                <Content key="textcontent" value="Eventhough the server is running down after selecting another type of file, the file is still saved in the Data Bank!"/>
+            </Tag>
+        </TestCase>
+        <TestCase id="c148" name="Testcase 4 / kein Datei auswählen">
+            <Marks true="c109 c118 c47 c56 c65 "/>
+        </TestCase>
+    </TestGroup>
+</TestonaObject>
