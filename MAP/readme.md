@@ -13,9 +13,9 @@
 
 ## Anleitung
 
-Das Programm läuft in der IDE von Fabian Steger. Der "build"-Ordner befindet sich im Ordner MAP, sodass "MAP" als Ordner ausgewählt werden muss. Das Programm ("map.exe") muss vom "build"-Ordner aus gestartet werden (Standard, wenn man neu "builded"):
+Das Programm läuft in der IDE von Fabian Steger. Der "build"-Ordner befindet sich im Ordner MAP, sodass "MAP" als Ordner in Visual Studio Code ausgewählt werden muss. Das Programm ("map.exe") muss vom "build"-Ordner aus gestartet werden (Standard, wenn man neu "builded"):
 ```
-...\build> ."C:/cpp_ide/timestamp_extractor/build/timestamp_extractor.exe"
+.../projektModulstudium/MAP/build> .\map.exe
 ```
 Nach Ausfuehrung des Programms startet den Server auf dem [localhost:8000](http://localhost:8000).
 
@@ -24,8 +24,8 @@ Nach Ausfuehrung des Programms startet den Server auf dem [localhost:8000](http:
 
 Durch Aufrufen des [localhost:8000](http://localhost:8000) kann die Anwendung genutzt werden. Hochgeladene Datensätze werden in der Datenbank abgelegt. Dort liegt auch bereits eine Test-Datei und die zugehörige Meta-Datei, die beim Hochladen automatisch mitangelegt wird:
 ```
-MAP/db/test.csv
-MAP/db/test.csvmeta
+.../projektModulstudium/MAP/db/test.csv
+.../projektModulstudium/MAP/db/test.csvmeta
 ```
 Das sind die Funktionen, die von der Startseite aus aufgerufen werden können:
 <p align="left">
