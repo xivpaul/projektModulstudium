@@ -15,7 +15,10 @@ set(SOURCES
     src/Value.cpp
     src/Visualization.cpp
     src/Plot.cpp
+    #test/utest.cpp
 )
+
+INCLUDE_DIRECTORIES("C:/Users/ua878/OneDrive - efs-auto.com/tools/boost_1_79_0")
 
 # Add an executable with the above sources
 add_executable(map ${SOURCES})
