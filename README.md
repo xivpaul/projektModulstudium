@@ -41,5 +41,13 @@ MAP/readme.md
 * <img src="./MAP/docu/testona.png" width="20" /> TESTONA light
 * <img src="./MAP/docu/vsc.jpg" width="20" /> Visual Studio Code
 
+## Testen
 
-
+Allgemeine Infos zu McCabe-Komplexität, Use-Case-Tests und Unit-Tests befinden sich im Ordner
+```
+SW_Test
+```
+Die konkrete Ausführung der Unit-Tests wird im readme zu MAP beschrieben. Der Code für die Unit-Tests befindet sich hier:
+```
+MAP/test/utest.cpp
+```

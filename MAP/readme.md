@@ -49,3 +49,17 @@ Das Klassendiagramm zeigt die Klassen, Schnittstellen sowie deren Beziehungen:
 <p align="center">
     <img src="./docu/classes.png"/>
 </p>
+
+
+## Unit-Tests
+
+Zur Ausführung der Unit-Tests muss die CMakeLists.txt angepasst werden:
+```
+set(SOURCES
+    ...
+    #src/main.cpp
+    ...
+    test/utest.cpp
+)
+INCLUDE_DIRECTORIES(*Pfad zu boost_1_79_0 anpassen*)
+```

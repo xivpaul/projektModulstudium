@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<TestonaObject id="c0">
+    <!--Created by TESTONA Light 6.7.0-->
+    <Tree id="c1" name="map_CSV_SetMetadata.testona" root="c2">
+        <Composition height="23" id="c2" name="map_CSV_SetMetadata" style="background-color:#FFFFFF; color:#000000; font-size:9px; font-family:'Segoe UI'; text-align:Center; transform:none" width="146" x="294" y="40">
+            <Classification height="20" id="c17" name="Name" width="51" x="202" y="95">
+                <Class height="20" id="c33" name="normaler Name" width="100" x="104" y="147"/>
+                <Class height="20" id="c45" name="Leerzeichen als Name" width="131" x="220" y="147"/>
+            </Classification>
+            <Classification height="20" id="c36" name="Format" width="57" x="476" y="95">
+                <Class height="20" id="c51" name="csv" width="40" x="423" y="147"/>
+                <Class height="20" id="c42" name="xlsx" width="40" x="489" y="148"/>
+                <Class height="20" id="c58" name="ohne Endung" width="88" x="570" y="147"/>
+            </Classification>
+        </Composition>
+    </Tree>
+    <TestGroup id="c3" name="">
+        <TestCase id="c54" name="Testcase 1 / Normale Datei">
+            <Marks true="c33 c51 "/>
+        </TestCase>
+        <TestCase id="c63" name="Testcase 2 / Leerzeichen als Name und xlsx">
+            <Marks true="c45 c42 "/>
+        </TestCase>
+        <TestCase id="c66" name="Testcase 3 / Normaler Name ohne Format-Endung">
+            <Marks true="c33 c58 "/>
+        </TestCase>
+        <TestCase id="c69" name="Testcase 4 / Leerzeichen als Name ohne Format-Endung">
+            <Marks true="c45 c58 "/>
+        </TestCase>
+    </TestGroup>
+</TestonaObject>
