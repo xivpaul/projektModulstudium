@@ -4,6 +4,7 @@
 
 class Plot : public Visualization {
 private:
+  // Kurvenfilter fuer Plotausgabe
   void calcFilteredData(CSV *csv, int filtersize, std::string *result_data,
                         std::string *result_time);
 
@@ -13,6 +14,6 @@ public:
   int chosen_columns[2] = {0, 1};
   std::string plot(CSV *csv, std::string DB_DIR_Input, std::string chosen_file,
                    std::string infoAlert);
-  int filtersize = 9; // initialwert
+  int filtersize = 9; // Initialwert
   std::string smoothed_data = "";
 };

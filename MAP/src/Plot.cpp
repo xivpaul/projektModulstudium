@@ -5,7 +5,7 @@ Plot::Plot() {}
 /**
  * @brief Die Methode gibt einen HTML String aus, um auf der Weboberfläche
  * die Messdaten zu visualisieren, sowie eine Achsauswahl der X- und Y-Achse
- * vornehmen zu können.
+ * vornehmen zu können. Zudem koennen Plotoptionen eingestellt werden.
  *
  * @param DB_DIR_Input Datenbankpfad des Servers (entspricht DB_DIR)
  * @param chosen_file Name der ausgewaehlte Messdatei
@@ -60,6 +60,7 @@ std::string Plot::plot(CSV *csv, std::string DB_DIR_Input,
       legend_options = "showlegend: true, legend: {\"orientation\": "
                        "\"h\",\"y\":1.1,\"x\":0.75,\"font\":{size:15}},";
       title_XAxis = csv->columns[chosen_columns[0]].name;
+      // Datenglaettung
       this->calcFilteredData(csv, filtersize, &result_data, &result_time);
       this->smoothed_data = " x: [" + result_time + "],y: [" + result_data +
                             "],mode:'lines',name:'Datenglättung mit gleitendem "
@@ -73,12 +74,6 @@ std::string Plot::plot(CSV *csv, std::string DB_DIR_Input,
       </form>\
       <br>";
     }
-    //  else {
-    //   this->smoothed_data = "";
-    // }
-    // if (!(chosen_columns[0] == 0)) {
-    //   this->smoothed_data = "";
-    // }
     YAxis = ",y: " + yColumn;
     title_YAxis = csv->columns[chosen_columns[1]].name;
   }
@@ -209,10 +204,10 @@ color: black;\
 </body>";
   return visualizationHttp;
 }
+// CSV Filterung mit gleitendem Mittelwert
 void Plot::calcFilteredData(CSV *csv, int filtersize, std::string *result_data,
                             std::string *result_time) {
 
-  // CSV Filterung mit gleitendem Mittelwert
   double vector_neu[csv->nRows][2] = {0};
   for (int n = 0; n < csv->nRows; n++) {
     float temp_data = 0; // Temporaerer Datencontainer

@@ -1,7 +1,10 @@
 #include "Column.hpp"
 
 #include <cmath>
-
+/**
+ * @brief Construct a new Column:: Column object
+ *
+ */
 Column::Column() { name = "UNKNOWN"; };
 
 Column::Column(std::string _name) { name = _name; }
@@ -12,7 +15,6 @@ bool Column::isType(Type type) {
       return false;
     }
   }
-
   return true;
 }
 

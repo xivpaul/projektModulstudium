@@ -2,17 +2,15 @@
 
 Visualization::Visualization() {}
 
-void Visualization::save(std::string path) {}
-
 void Visualization::compute(CSV *csv, std::string DB_DIR_Input,
                             std::string chosen_file, int chosen_columns[2]) {
   xColumn = csv->columns[chosen_columns[0]].toString();
   yColumn = csv->columns[chosen_columns[1]].toString();
 }
 
+// Dropdown fuer x-Achsauswahl im Diagramm
 std::string Visualization::setXColumnOptions(CSV *csv, std::string loaded_file,
                                              int chosen_columns[2]) {
-  // CSV csv;
   std::string httpColumnSetString;
   std::string X_SPALTENOPTIONEN;
 
@@ -28,7 +26,7 @@ std::string Visualization::setXColumnOptions(CSV *csv, std::string loaded_file,
   }
   return X_SPALTENOPTIONEN;
 }
-
+// Dropdown fuer y-Achsauswahl im Diagramm
 std::string Visualization::setYColumnOptions(CSV *csv, std::string loaded_file,
                                              int chosen_columns[2]) {
   std::string httpColumnSetString;
@@ -46,6 +44,7 @@ std::string Visualization::setYColumnOptions(CSV *csv, std::string loaded_file,
   }
   return Y_SPALTENOPTIONEN;
 }
+// Analysetabelle erzeugen
 std::string Visualization::createAnalysisTableString(CSV *csv) {
 
   int anzahl_spalten = csv->columns.size();
@@ -71,7 +70,7 @@ std::string Visualization::createAnalysisTableString(CSV *csv) {
   }
   return HTMLTableString;
 }
-
+// HTML-String fuer die Anzeige des Analyseberichts erzeugen
 std::string Visualization::showAnalysis(CSV *csv, std::string chosen_file) {
   // Create time
   time_t rawtime;
@@ -172,14 +171,14 @@ Drucken\
 </ body>";
   return httpAnalysisReportString;
 }
-
+// Historie zuruecksetzen
 void Visualization::clearHistory() {
   trans_ColumnHistory.clear();
   trans_ValueHistory.clear();
   trans_OperationHistory.clear();
   Transformationszaehler = 0;
 }
-
+// Historientabelle fuer Transformation erzeugen als HTML-String
 std::string Visualization::createTransformationHistoryTableString() {
   std::vector<std::string> trans_Number;
 
@@ -203,7 +202,7 @@ std::string Visualization::createTransformationHistoryTableString() {
 
   return HTMLTableString;
 }
-
+// HTML-String fuer Plot in Analysebericht erzeugen
 std::string Visualization::createAnalysisReportPlot(CSV *csv) {
 
   std::string xColumn = csv->columns[0].toString();

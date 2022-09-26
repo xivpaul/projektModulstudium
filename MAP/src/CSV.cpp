@@ -1,6 +1,11 @@
 #include "CSV.hpp"
 
+/**
+ * @brief Construct a new CSV::CSV object
+ *
+ */
 CSV::CSV(){};
+// Metadatenermittlung
 void CSV::setMetadata(std::string path) {
 
   metadata.clear();
@@ -23,7 +28,7 @@ void CSV::setMetadata(std::string path) {
   std::string timestamp(buffer);
   metadata.push_back(timestamp);
 }
-
+// Einlesen der Daten auf dem CSV-File
 void CSV::read(std::string path) {
   nRows = 0;
   // Daten zuruecksetzen:
@@ -40,8 +45,6 @@ void CSV::read(std::string path) {
       std::vector<Value> parsed;
 
       for (std::string token; std::getline(ss, token, ',');) {
-        // Hier muss noch ueberarbeitet werden. Manchmal werden noch "
-        // mitgenommen, was zu Fehlverhalten fuehrt
         if (token.size() >= 2 && token[0] == '"') {
           if (token[token.size() - 1] == '"') {
             token = token.substr(1, token.size() - 2);
@@ -53,7 +56,6 @@ void CSV::read(std::string path) {
           parsed.push_back(Value(std::stod(token)));
         }
       }
-      // Hier muss noch ueberarbeitet werden
       if (columns.size() == 0) {
         bool allStrings = true;
         for (Value cValue : parsed) {
@@ -93,42 +95,21 @@ void CSV::read(std::string path) {
       auto messpt = Value(i * 1.0);
       column.values.push_back(messpt);
     }
-    // columns.push_back(column);
     columns.insert(columns.begin(), column);
   }
 }
-
-void CSV::print() {
-  std::cout << "| ";
-  for (Column column : columns) {
-    std::cout << column.name << " | ";
-  }
-  std::cout << std::endl;
-
-  for (int row; row < nRows; row++) {
-    std::cout << "  ";
-    for (Column column : columns) {
-      if (column.values[row].type == NUMBER) {
-        std::cout << column.values[row].numberValue;
-      } else {
-        std::cout << column.values[row].stringValue;
-      }
-      std::cout << " | ";
-    }
-    std::cout << std::endl;
-  }
-}
+// Methode erstellt aus den transformierten Daten der CSV eine neue Datei
+// Trans_xxx und speichert diese.
 void CSV::creatTransCSV(std::string FileWithPath) {
   std::ofstream outputfile(FileWithPath);
-  for (int j = (0 + int(idx)); j < columns.size(); j++) { // neu
-    outputfile << "\"" << columns[j].name << "\"";        // neu
+  for (int j = (0 + int(idx)); j < columns.size(); j++) {
+    outputfile << "\"" << columns[j].name << "\"";
     if (j < (columns.size() - 1)) {
-      outputfile << ",";  // neu
-    } else {              // neu
-      outputfile << "\n"; // neu
-    }                     // neu
+      outputfile << ",";
+    } else {
+      outputfile << "\n";
+    }
   }
-  // outputfile << "\n"; //alt
   for (int i = 0; i < columns[0].values.size(); i++) {
     for (int j = (0 + int(idx)); j < columns.size(); j++) {
       if (columns[j].values[i].type == NUMBER) {
@@ -137,17 +118,16 @@ void CSV::creatTransCSV(std::string FileWithPath) {
         outputfile << "\"" << columns[j].values[i].stringValue << "\"";
       }
       if (j < (columns.size() - 1)) {
-        outputfile << ",";  // neu
-      } else {              // neu
-        outputfile << "\n"; // neu
-      }                     // neu
+        outputfile << ",";
+      } else {
+        outputfile << "\n";
+      }
     }
   }
   outputfile.close();
 };
-
+// Speichert die Metadaten in eine Textdatei dauerhaft ab.
 void CSV::createMetadata(std::string FileWithPath) {
-  // CSV csv;
   setMetadata(FileWithPath);
   std::ofstream outfile(FileWithPath + "meta");
   outfile << "Pfad: " + metadata[0] + "<br>";
@@ -155,7 +135,8 @@ void CSV::createMetadata(std::string FileWithPath) {
   outfile << "Datum: " + metadata[2];
   outfile.close();
 }
-
+// Aufrufen und Abspeichern der Spaltenberechnungen für Analysebericht in einer
+// Matrix
 void CSV::buildAnalysisMatrix() {
   AnalysisMatrix.clear();
   std::vector<std::string> spalte;
@@ -188,7 +169,7 @@ void CSV::buildAnalysisMatrix() {
     AnalysisMatrix[i][4] = std::to_string(columns[i + idx].standardDeviation());
   }
 }
-
+// Methode für das Transformieren ganzer Spalten nach Auswahl des Anwenders
 void CSV::transformColumnValues(std::string FileWithPath) {
 
   if (TransformOperation == "+") {
@@ -214,7 +195,7 @@ void CSV::transformColumnValues(std::string FileWithPath) {
   }
   CSV::creatTransCSV(FileWithPath);
 }
-
+// HTML String fuer verfuegbare Spaltentitel zur Transformation
 std::string CSV::createDropDownString_Column() {
   std::string DD_String_Column =
       "<option value=\"0\">Keine Datei ausgewählt</option>";
@@ -237,7 +218,7 @@ std::string CSV::createDropDownString_Column() {
 
   return DD_String_Column;
 }
-
+// HTML String fuer Auswahl der Transformationsoperationen
 std::string CSV::createDropDownString_Operation() {
   std::vector<std::string> operations = {"+", "-", "*", "/"};
   std::string DD_String_Operation = "<option value=" + TransformOperation +
@@ -253,14 +234,14 @@ std::string CSV::createDropDownString_Operation() {
 
   return DD_String_Operation;
 }
-
+// HTML String fuer Manipulationswerteingabefenster
 std::string CSV::createInputValueString() {
 
   return "<input type=\"text\" id=\"id_transformvalue\" "
          "name=\"transformvalue\" value=" +
          std::to_string(TransformValue) + ">";
 }
-
+// HTML String zur Anzeige der vorhandenen CSV-Dateien im Datenbankordner
 std::string CSV::createDropDownString_Files(std::string loaded_file,
                                             std::string DB_DIR) {
   std::vector<std::string> data_vector;
@@ -296,11 +277,10 @@ std::string CSV::createDropDownString_Files(std::string loaded_file,
   }
   return OPTIONSLISTE;
 }
-
+// copy csv to webroot to offer client download of file
 void CSV::downloadFileFromServer(std::string path_webroot,
                                  std::string path_databank,
                                  std::string filename) {
-  // copy csv to webroot to offer client download of file
   try {
     try {
       std::filesystem::remove(path_webroot + "/download_folder/download.csv");

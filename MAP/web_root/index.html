@@ -54,10 +54,6 @@
             </label>
             <input id="inputfile" type="file" name="file1" class="file" />
           </div>
-          <!-- <div class="preview" style="height: 30px; display: inline-flex; align-items: center;">
-            <p>Keine Datei ausgewählt</this>
-            </p>
-          </div> -->
           <br>
           <div><button style="display:inline;" type="submit">
               <span class="button__text">Hochladen&nbsp;&nbsp</span>
@@ -76,15 +72,6 @@
           </select>
           <input style="height: 30px;" class="load_data" type="submit" value="OK" />
           <br>
-          <!--
-          <p style="display:none;" id="id_download">
-          <div><button style="display:inline;" type="submit" href="DOWNLOADLINK">
-              <span class="button__text">Herunterladen&nbsp;&nbsp</span>
-              <span class="button__icon">
-                <ion-icon name="cloud-download-outline"></ion-icon>
-              </span>
-            </button></div>
-          </p>-->
 
           <br>
           <label>USERTEXT</label> <!-- Hier wird der Text angezeigt welche Datei gerade geladen ist-->
@@ -101,7 +88,6 @@
       <div id="analyze">
         <!-- Bereich Analyse: -->
         <h2>Messdatei transformieren</h2>
-        <!-- <h4>Zu transformierende Spalte wählen:</h4> -->
         <label for="Transformationsspalte" style="font-weight: normal;">Zu transformierende Spalte wählen:</label>
         <form action="/transformColumn" method="post" enctype="multipart/form-data"
           style="margin-left: 22px;display: inline-flex; align-items: center;">
@@ -109,7 +95,6 @@
             TRANSFORMATIONSSPALTE
           </select>
         </form>
-        <!-- <h4>Operation wählen:</h4> -->
         <br>
         <label for=" Operation" style="font-weight: normal;">Operation wählen:</label>
         <form action="/setOperation" method="post" enctype="multipart/form-data"
@@ -119,13 +104,11 @@
           </select>
         </form>
 
-        <!-- <h4>Wert eingeben:</h4> -->
         <br>
         <label for="Eingabewert" style="font-weight: normal;">Wert
           eingeben:</label>
         <form action="/setTransformationValue" method="post" enctype="multipart/form-data"
           style="color: black; display: inline-flex; align-items: center; margin-left: 150px;">
-          <!-- style="background-color: white; color: black"-->
           EINGABEWERT
           <button type="submit" style="color: white; height: 26px; ">
             <span class="button__text">Transformieren&nbsp;&nbsp</span>
@@ -199,7 +182,6 @@
     </div><!-- Bereich Visualisierung Ende-->
     <div id="footer">
       <button type="button" class="help_button" onclick="togglePopup()">
-        <!--Link zu readme anpassen, .md kann nicht geöffnet werden-->
         <span class="help_icon">
           <ion-icon name="help-circle-outline"></ion-icon>
         </span>

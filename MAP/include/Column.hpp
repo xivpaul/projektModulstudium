@@ -1,12 +1,11 @@
 #pragma once
 
 #include "Value.hpp"
-#include <algorithm> // std::min_element
+#include <algorithm> // verwendet fuer std::min_element
 #include <iostream>
-#include <iterator> // std::begin, std::end
+#include <iterator> // verwendet fuer std::begin, std::end
 #include <string>
 #include <vector>
-
 
 class Column {
 public:

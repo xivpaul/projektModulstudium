@@ -17,6 +17,15 @@ Server *Server::getInstance() {
 
 Server *Server::instance = nullptr;
 
+// Kommunikation mit Server:
+// 1) Methoden werden entsprechend der URL aufgerufen
+// 2) Daten werden als Strings vom Browser empfangen und abgespeichert
+// 3) Handler werden aufgerufen, die neuen String erzeugen
+// 4) index.html wird wird durch erzeugte Strings manipuliert
+// 5) Uebergabe zurueck an mongoose zum Seitenrefresh
+// 6) Falls neue Seite benoetigt wird, wird diese komplett erzeugt (html) und
+// zurueck an mongoose gesendet
+
 static void http_callback(struct mg_connection *c, int ev, void *ev_data,
                           void *fn_data) {
   if (ev == MG_EV_HTTP_MSG) {
@@ -153,11 +162,6 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
         try {
           int Filtersize = stoi(received_data.substr(0, (int)part.body.len));
           if (Filtersize % 2 == 0 or Filtersize < 0) {
-            // std::string redirection =
-            //     "<head><meta http-equiv=\"Refresh\" content=\"3; "
-            //     "URL=/visualize\"></head><body>Filterwert muss eine ungerade
-            //     " "Zahl " "sein!\n Sie werden gleich wieder " "zum Plot
-            //     Fenster gebracht.</body>";
             Server::getInstance()->createInfoMessage(
                 "Der Filterwert muss eine ungerade Zahl und positiv sein! Der "
                 "Wert wurde deshalb nicht geändert.",
@@ -173,12 +177,6 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
               "URL=/visualize\"></head>";
           mg_http_reply(c, 200, "", redirection.c_str());
         } catch (...) {
-          // std::string redirection =
-          //     "<head><meta http-equiv=\"Refresh\" content=\"3; "
-          //     "URL=/\"></head><body>Filterwert darf nicht leer sein "
-          //     "und "
-          //     "keine Buchstaben enthalten!\n Sie werden gleich wieder "
-          //     "zur Hauptseite gebracht.</body>";
           Server::getInstance()->createInfoMessage(
               "Der Filterwert darf nicht leer sein und keine Buchstaben "
               "enthalten!",
@@ -321,8 +319,7 @@ std::string Server::handleCSVFileUpload(std::string data,
       already_there = true;
     }
   }
-  // Bei existierender Datei wird zum erneuten Hochladen aufgefordert und
-  // an die Startseite zurückgegeben.
+  // Warnungen wenn Upload nicht funktioniert
   if (already_there) {
     Server::getInstance()->createInfoMessage(
         "Die Datei existiert bereits in der Datenbank!", "danger");
@@ -423,7 +420,7 @@ std::string Server::handleVisualizationRequest() {
 }
 
 void Server::createInfoMessage(std::string infotext, std::string InfoStatus) {
-  // Quelle: aler box
+  // Quelle: alert box
   // https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_alerts_fade&stacked=h
   Server::getInstance()->infoAlert = "<div class=\"alert alert-" + InfoStatus +
                                      " alert-dismissible fade in\">\
@@ -431,7 +428,7 @@ void Server::createInfoMessage(std::string infotext, std::string InfoStatus) {
       <strong>Hinweis!</strong> " + infotext +
                                      "</div>";
 }
-
+// Aufsetzen des Webservers
 void Server::start() {
   struct mg_mgr mgr;
 

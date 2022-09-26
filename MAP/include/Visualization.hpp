@@ -7,24 +7,23 @@
 
 class Visualization {
 private:
-  std::string createAnalysisTableString(CSV *csv);
-  const int maxHistoryEntries = 7;
+  std::string createAnalysisTableString(CSV *csv); // Tabelle Analysebericht
 
 public:
   Visualization();
+  // Diagramm zeichnen
   std::string xColumn;
   std::string yColumn;
-  std::string createAnalysisReportPlot(CSV *csv);
-  std::string
-  setXColumnOptions(CSV *csv, std::string loaded_file,
-                    int chosen_columns[2]); // diese Methoden dürfen nicht
-                                            // private sein. Warum nicht?
+  std::string setXColumnOptions(CSV *csv, std::string loaded_file,
+                                int chosen_columns[2]);
   std::string setYColumnOptions(CSV *csv, std::string loaded_file,
                                 int chosen_columns[2]);
-  std::string showAnalysis(CSV *csv, std::string chosen_file);
-  void save(std::string path);
   void compute(CSV *csv, std::string DB_DIR_Input, std::string chosen_file,
                int chosen_columns[2]);
+  // Analysebericht erstellen
+  std::string createAnalysisReportPlot(CSV *csv);
+  std::string showAnalysis(CSV *csv, std::string chosen_file);
+  // Transformationshistorie
   std::string createTransformationHistoryTableString();
   std::vector<std::string> trans_ColumnHistory;
   std::vector<std::string> trans_OperationHistory;
