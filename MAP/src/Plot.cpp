@@ -92,6 +92,10 @@ std::string Plot::plot(CSV *csv, std::string DB_DIR_Input,
     <link rel=\"stylesheet\" href=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css\">\
   <script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js\"></script>\
   <script src=\"https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js\"></script>\
+  <link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\">\
+<link\
+    href=\"https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap\"\
+    rel=\"stylesheet\">\
   <head>\
     <title>Messdaten analysieren</title>\
     <script src='plotly-2.12.1.min.js'></script> \
@@ -103,25 +107,37 @@ std::string Plot::plot(CSV *csv, std::string DB_DIR_Input,
     }\
        #frame_axis {\
        margin-top:0px;\
-      padding: 2em;\
+      padding-top: 2em;\
+      padding-left: 2em;\
+      padding-right: 2em;\
       float: left;\
       width: 50%;\
       flex: 1;\
     }\
       #frame_plotstyle {\
       margin-top:0px;\
-      padding: 2em;\
+      padding-top: 2em;\
+      padding-left: 2em;\
+      padding-right: 2em;\
       float: right;\
       width: 50%;\
       flex: 1;\
     }\
      #frame {\
       margin-bottom: 0px;\
+      margin-left: 10px;\
+      margin-right: 10px;\
       border-radius: .5em;\
-      padding: 2em;\
+      padding-top: 2em;\
+      padding-left: 2em;\
+      padding-right: 2em;\
+      padding-bottom: .8em;\
       border: 1px solid black;\
       display:flex;\
     }\
+    body {\
+color: black;\
+}\
     </style>\
   </head>\
   <body>\
@@ -185,9 +201,10 @@ std::string Plot::plot(CSV *csv, std::string DB_DIR_Input,
       Eingabefenster_Filter + "</div>\
     </div>\
   </div>\
-  <form action = \"http://localhost:8000\" style=\"margin-top:10px;\">\
-  <input type = \"submit\" value = \"Zurück zur Startseite\"/>\
-  </form>\
+  <br>\
+  <form style=\"display: inline; margin-top:5px; margin-left: 10px; height=30px;\"action = \"http://localhost:8000\">\
+<input id='backHome' style=\"color: white;\" type = \"submit\" value = \"Zurück zur Startseite\"/>\
+</form>\
 </div>\
 </body>";
   return visualizationHttp;

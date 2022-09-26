@@ -31,7 +31,6 @@ std::string Visualization::setXColumnOptions(CSV *csv, std::string loaded_file,
 
 std::string Visualization::setYColumnOptions(CSV *csv, std::string loaded_file,
                                              int chosen_columns[2]) {
-  // CSV csv;
   std::string httpColumnSetString;
   std::string Y_SPALTENOPTIONEN;
 
@@ -88,6 +87,10 @@ std::string Visualization::showAnalysis(CSV *csv, std::string chosen_file) {
  <meta charset=\"utf-8\" />\
   <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />\
   <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\" />\
+  <link\
+    href=\"https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap\"\
+    rel=\"stylesheet\">\
+  <link rel=\"stylesheet\" type=\"text/css\" href=\"styles.css\">\
 <head>\
       <title>Analysebericht von " + chosen_file +
                                          "\
@@ -111,8 +114,16 @@ std::string Visualization::showAnalysis(CSV *csv, std::string chosen_file) {
       padding: 2em;\
       border: 1px solid black;\
     }\
-table, th, td {\
+table{\
   border:1px solid black;\
+  width:900px;\
+  font-size: 13px;\
+}\
+ th, td {\
+  border:1px solid black;\
+}\
+body {\
+color: black;\
 }\
 </style>\
 </head>\
@@ -127,7 +138,14 @@ table, th, td {\
   </div>\
   <div id='frame'>\
     <h3 style=\"margin-top:-5px;\"> Transformationshistorie</h3>\
-    <table> " + createTransformationHistoryTableString() +
+    <table >\
+              <tr>\
+                <th WIDTH=\"10%\">Nr.</th>\
+                <th WIDTH=\"30%\">Spaltenname</th>\
+                <th WIDTH=\"30%\">Operation</th>\
+                <th WIDTH=\"30%\">Eingabewert</th>\
+              </tr>\
+     " + createTransformationHistoryTableString() +
                                          "</table>\
   </div>\
   <div id ='frame'>\
@@ -140,13 +158,17 @@ table, th, td {\
                                          "</div>\
                                          <br>\
 <form style=\"display: inline;\"action = \"http://localhost:8000\">\
-<input type = \"submit\" value = \"Zurück zur Startseite\"/>\
+<input id='backHome' style=\"color: white;\" type = \"submit\" value = \"Zurück zur Startseite\"/>\
 </form>\
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\
-<button onclick=\"printFunction();\">Drucken</button>\
-<script> function printFunction() {window.print();}\
+<button onclick=\"printFunction();\" style=\"color: white;\">\
+Drucken\
+      </button><script> function printFunction() {\
+                                         window.print();\
+}\
 </script>\
 </div>\
+<script type =\"module\" src=\"https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js\"></script>\
 </ body>";
   return httpAnalysisReportString;
 }
@@ -160,32 +182,22 @@ void Visualization::clearHistory() {
 
 std::string Visualization::createTransformationHistoryTableString() {
   std::vector<std::string> trans_Number;
-  int init_value = 1;
-  if (Transformationszaehler > maxHistoryEntries) {
-    init_value = Transformationszaehler - maxHistoryEntries;
-  }
-  for (int i = init_value; i <= Transformationszaehler; i++) {
+
+  for (int i = 1; i <= Transformationszaehler; i++) {
     trans_Number.push_back(std::to_string(i));
   }
 
-  if (trans_ColumnHistory.size() > maxHistoryEntries) {
-    trans_OperationHistory.erase(trans_OperationHistory.begin());
-    trans_ColumnHistory.erase(trans_ColumnHistory.begin());
-    trans_ValueHistory.erase(trans_ValueHistory.begin());
-  }
-  // Spaltenueberschriften erzeugen:
-  std::string HTMLTableString =
-      "<tr><th>Nr.</th><th>Spaltenname</th><th>Operation</"
-      "th><th>Eingabewert</th></tr>";
+  std::string HTMLTableString;
+
   // Werte befuellen:
   for (int j = 0; j < trans_ColumnHistory.size(); j++) {
-    HTMLTableString += "<tr><td>" + trans_Number[j] +
+    HTMLTableString += "<tr><td WIDTH=\"10%\"> " + trans_Number[j] +
                        "</td>"; // Nummerierung der Operation hinzufuegen
-    HTMLTableString +=
-        "<td>" + trans_ColumnHistory[j] + "</td>"; // Spaltenname hinzufuegen
-    HTMLTableString +=
-        "<td>" + trans_OperationHistory[j] + "</td>"; // Operation hinzufuegen
-    HTMLTableString += "<td>" + trans_ValueHistory[j] +
+    HTMLTableString += "<td width=\"30%\">" + trans_ColumnHistory[j] +
+                       "</td>"; // Spaltenname hinzufuegen
+    HTMLTableString += "<td WIDTH=\"30%\">" + trans_OperationHistory[j] +
+                       "</td>"; // Operation hinzufuegen
+    HTMLTableString += "<td WIDTH=\"30%\">" + trans_ValueHistory[j] +
                        "</td></tr>"; // eingegebenen Wert hinzufuegen
   }
 

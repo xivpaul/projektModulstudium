@@ -75,7 +75,7 @@ static void http_callback(struct mg_connection *c, int ev, void *ev_data,
           Server::getInstance()->createInfoMessage(
               "Bitte geben Sie einen ungeraden Wert zur Filterung der Rohdaten "
               "ein.",
-              "success");
+              "info");
         }
         plotObj.plotstyle = plotstyle;
       }
@@ -241,10 +241,13 @@ std::string Server::handleStartPageRequest() {
   httpStartPageString =
       Server::modifyHTMLText("path_to_file", loaded_file, httpStartPageString);
   if (csv.columns.size() > 0) {
-    std::string DownloadString = "<a href=\"download_folder/download.csv\" "
-                                 "download=" +
-                                 Server::getInstance()->chosen_file +
-                                 ">Gewählte Messdatei herunterladen</a>";
+    std::string DownloadString =
+        "<a style=\"color:red;\" href=\"download_folder/download.csv\" "
+        "download=" +
+        Server::getInstance()->chosen_file +
+        "><ion-icon "
+        "name=\"cloud-download-outline\"></ion-icon><strong> Gewählte "
+        "Messdatei herunterladen</strong></a>";
     std::string Placeholder_DownloadLink =
         "<p style=\"display:none;\" id=\"id_download\">DOWNLOADLINK</p>";
     httpStartPageString = Server::modifyHTMLText(

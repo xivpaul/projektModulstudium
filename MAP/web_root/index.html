@@ -7,144 +7,216 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="styles.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
-  <!--Quelle: aler box https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_alerts_fade&stacked=h-->
+  <script>function togglePopup() {
+      document.getElementById("popup-1").classList.toggle("active");
+    }</script>
+  <!--Quelle: alert box https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_alerts_fade&stacked=h-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+    rel="stylesheet">
   <style>
-    #container {
-      margin-right: auto;
-      margin-left: auto;
-      max-width: 800px;
-    }
-
-    #info {
-      background: #e0f0f0;
-      border-radius: .5em;
-      padding: 2em;
-    }
-
-    #upload {
-      background-color: rgb(255, 173, 80);
-      border-radius: .5em;
-      padding: 2em;
-    }
-
-    #analyze {
-      background: #9ee7f7;
-      border-radius: .5em;
-      padding: 2em;
-      float: left;
-      width: 50%;
-    }
-
-    #transformationhistory {
-      background: #9ef7e4;
-      border-radius: .5em;
-      padding: 2em;
-      float: right;
-      width: 50%;
-      flex: 1;
-    }
-
-    #visualize {
-      background: #f7e89e;
-      border-radius: .5em;
-      padding: 2em;
-      flex: 1;
-    }
-
-    #wrapper {
-      display: flex;
-    }
-
-    form * {
-      margin: 0.2em 0;
+    .divScroll {
+      margin: 0px;
+      overflow-y: auto;
+      height: 150px;
     }
   </style>
 </head>
 
-<body>
+<body class="bg">
   <div id="container">
     <p style="display:none;">INFOMESSAGE</p>
-    <div id="info">
-      <h1>Messdaten Analyse Plattform</h1>
+    <div id="Header" style="color: black">
+      <div id="logo">
+        <span>
+          e:fs</span>
+      </div>
+      <div id="info">
+        <span>
+          Messdaten Analyse Plattform</span>
+      </div>
     </div>
-    <div id="upload">
-      <h2>Messdaten hochladen</h2>
-      <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file1" style="display:inline;" />
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <button style="display:inline;" type="submit">Hochladen</button>
-      </form>
-      <br>
-      <hr>
-      <h2>Messdatei aus Serverdatenbank wählen</h2>
-      <form action="/load" method="post" enctype="multipart/form-data">
-        <label for="Messdatei">Messdatei wählen:</label>
-        <select name="Messdatei" id="id_messdatei">
-          OPTIONSLISTE
-        </select>
-        <input type="submit" value="OK" />
-        &nbsp;&nbsp;&nbsp;&nbsp;
-        <p style="display:none;" id="id_download">DOWNLOADLINK</p>
+    <div id="import">
+      <div id="upload">
+        <h2>Messdaten hochladen</h2>
+        <form action="/upload" method="post" enctype="multipart/form-data">
+          <div>
+            <label for="inputfile" class="upload_label" style="height: 30px; width: 136px;">
+              <span class="button__text">&nbsp;&nbsp;Datei auswählen&nbsp;&nbsp;</span>
+              <span class="button__icon">
+                <ion-icon name="folder-open-outline"></ion-icon>
+              </span>
+            </label>
+            <input id="inputfile" type="file" name="file1" class="file" />
+          </div>
+          <!-- <div class="preview" style="height: 30px; display: inline-flex; align-items: center;">
+            <p>Keine Datei ausgewählt</this>
+            </p>
+          </div> -->
+          <br>
+          <div><button style="display:inline;" type="submit">
+              <span class="button__text">Hochladen&nbsp;&nbsp</span>
+              <span class="button__icon">
+                <ion-icon name="cloud-upload-outline"></ion-icon>
+              </span>
+            </button></div>
+        </form>
+      </div><!-- Bereich upload Ende -->
+      <div id="load">
+        <h2>Messdatei aus Serverdatenbank wählen</h2>
+        <form action="/load" method="post" enctype="multipart/form-data">
+          <label for="Messdatei">Messdatei wählen:</label>
+          <select name="Messdatei" id="id_messdatei" style="color: black;">
+            OPTIONSLISTE
+          </select>
+          <input style="height: 30px;" class="load_data" type="submit" value="OK" />
+          <br>
+          <!--
+          <p style="display:none;" id="id_download">
+          <div><button style="display:inline;" type="submit" href="DOWNLOADLINK">
+              <span class="button__text">Herunterladen&nbsp;&nbsp</span>
+              <span class="button__icon">
+                <ion-icon name="cloud-download-outline"></ion-icon>
+              </span>
+            </button></div>
+          </p>-->
+
+          <br>
+          <label>USERTEXT</label> <!-- Hier wird der Text angezeigt welche Datei gerade geladen ist-->
+          <br>
+          METADATEN
+        </form>
         <br>
-        <h4>USERTEXT</h4> <!-- Hier wird der Text angezeigt welche Datei gerade geladen ist-->
-        METADATEN
-      </form>
-    </div> <!-- Bereich Upload Ende -->
+        <p style="display:none;" id="id_download">DOWNLOADLINK</p>
+      </div> <!-- Bereich load Ende -->
+    </div><!-- Bereich import Ende -->
+    <br>
+    <hr>
     <div id="wrapper">
       <div id="analyze">
         <!-- Bereich Analyse: -->
         <h2>Messdatei transformieren</h2>
-        <h4>Zu transformierende Spalte wählen:</h4>
-        <form action="/transformColumn" method="post" enctype="multipart/form-data">
-          <label for="Transformationsspalte"></label>
-          <select name="transfspalte" id="id_transfspalte" onchange="submit()">
+        <!-- <h4>Zu transformierende Spalte wählen:</h4> -->
+        <label for="Transformationsspalte" style="font-weight: normal;">Zu transformierende Spalte wählen:</label>
+        <form action="/transformColumn" method="post" enctype="multipart/form-data"
+          style="margin-left: 22px;display: inline-flex; align-items: center;">
+          <select name="transfspalte" id="id_transfspalte" onchange="submit()" style="color: black;">
             TRANSFORMATIONSSPALTE
           </select>
         </form>
-        <h4>Operation wählen:</h4>
-        <form action="/setOperation" method="post" enctype="multipart/form-data">
-          <label for="Operation"></label>
-          <select name="oper" id="id_oper" onchange="submit()">
+        <!-- <h4>Operation wählen:</h4> -->
+        <br>
+        <label for=" Operation" style="font-weight: normal;">Operation wählen:</label>
+        <form action="/setOperation" method="post" enctype="multipart/form-data"
+          style="margin-left: 131px;display: inline-flex; align-items: center;">
+          <select name="oper" id="id_oper" onchange="submit()" style="color: black;">
             OPERATION
           </select>
         </form>
 
-        <h4>Wert eingeben:</h4>
-        <form action="/setTransformationValue" method="post" enctype="multipart/form-data">
+        <!-- <h4>Wert eingeben:</h4> -->
+        <br>
+        <label for="Eingabewert" style="font-weight: normal;">Wert
+          eingeben:</label>
+        <form action="/setTransformationValue" method="post" enctype="multipart/form-data"
+          style="color: black; display: inline-flex; align-items: center; margin-left: 150px;">
+          <!-- style="background-color: white; color: black"-->
           EINGABEWERT
-          <button type="submit">Transformieren</button>
+          <button type="submit" style="color: white; height: 26px; ">
+            <span class="button__text">Transformieren&nbsp;&nbsp</span>
+            <span class="button__icon">
+              <ion-icon name="cog-outline"></ion-icon>
+            </span>
+          </button>
         </form>
       </div>
-      <div id="transformationhistory">
+      <div id="transformationhistory" style="max-width:560px;">
         <h2> Transformationshistorie</h2>
         <br>
         <form>
           <style>
-            table,
-            th,
-            td {
+            table {
               border: 1px solid black;
+              background: white;
+              max-width: 500px;
+              width: 500px;
+              margin: 0px;
+              color: black;
+            }
+
+            td,
+            th {
+              border: 1px solid black;
+              word-break: break-all;
             }
           </style>
-          <table>
-            TRANSFORMATIONSHISTORIE
-          </table>
+          <div style="margin-bottom: 0px;margin-top:-20px;">
+            <table>
+              <tr>
+                <th WIDTH="10%">Nr.</th>
+                <th WIDTH="30%">Spaltenname</th>
+                <th WIDTH="30%">Operation</th>
+                <th WIDTH="30%">Eingabewert</th>
+              </tr>
+            </table>
+          </div>
+
+          <div class="divScroll">
+            <table>
+              TRANSFORMATIONSHISTORIE
+            </table>
+          </div>
         </form>
       </div>
-    </div>
+    </div><!-- Bereich Analyse Ende -->
+    <br>
+    <hr>
     <div id="visualize">
+      <!-- Bereich Visualisierung-->
       <h2>Messdatei analysieren</h2>
       <form style="display:inline;" action="/visualize">
-        <button type="submit">Diagramm zeichnen</button>
+        <button type="submit">
+          <span class="button__text">Diagramm zeichnen&nbsp;&nbsp</span>
+          <span class="button__icon">
+            <ion-icon name="bar-chart-outline"></ion-icon>
+          </span>
+        </button>
       </form>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       <form style="display:inline;" action="/analyse">
-        <button type="submit">Analysebericht erstellen</button>
+        <button type="submit">
+          <span class="button__text">Analysebericht erstellen&nbsp;&nbsp</span>
+          <span class="button__icon">
+            <ion-icon name="document-text-outline"></ion-icon>
+          </span>
+        </button>
       </form>
+    </div><!-- Bereich Visualisierung Ende-->
+    <div id="footer">
+      <button type="button" class="help_button" onclick="togglePopup()">
+        <!--Link zu readme anpassen, .md kann nicht geöffnet werden-->
+        <span class="help_icon">
+          <ion-icon name="help-circle-outline"></ion-icon>
+        </span>
+      </button>
     </div>
   </div>
+  <div class="popup" id="popup-1">
+    <div class="overlay"></div>
+    <div class="content">
+      <div class="close-btn" onclick="togglePopup()">&times;</div>
+      <h1>Klickanleitung</h1>
+      <img src="Hilfe.gif" alt="Hilfe-Video für das Tool MAP">
+    </div>
+  </div>
+
+  <!--Icons laden-->
+  <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
 </body>
 
 </html>
