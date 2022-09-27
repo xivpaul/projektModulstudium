@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(check_metadaten_4) {
   BOOST_CHECK(csv.metadata[0] == ("../db/ "));
   BOOST_CHECK(csv.metadata[1] == (""));
   std::cout << "Test schlaegt fehl, weil der Code die fehlende Format-Endung "
-               "nicht abfangen kann. Als Endung wird das hier erzeugt: "
+               "nicht abfangen kann. Als Endung wird das datahier erzeugt: "
             << csv.metadata[1] << std::endl;
 }
 
