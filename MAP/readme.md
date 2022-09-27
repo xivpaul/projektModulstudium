@@ -29,18 +29,17 @@ Durch Aufrufen des [localhost:8000](http://localhost:8000) kann die Anwendung ge
 ```
 Das sind die Funktionen, die von der Startseite aus aufgerufen werden können:
 <p align="left">
-    <img src="./docu/Bild3.PNG" width="700" />
+    <img src="./web_root/Hilfe.gif" width="700" />
 </p>
 
-
-
-| Nr. | Beschreibung                                                 |
-| ------------ | ------------------------------------------------------------ |
-| 1            | Menü zum Upload von Messdaten                                |
-| 2            | Menü zur Auswahl von Messdaten                               |
-| 3            | Transformation einzelner Messwerte innerhalb eines Messdatenfiles. (inklusive Historie) |
-| 4            | grafische Auswertung                                         |
-| 5            | analytische / tabellarische Auswertung                       |
+| Bereich                             | Beschreibung                                                       |
+| ----------------------------------- | ------------------------------------------------------------------ |
+| Messdaten hochladen                 | Messdatei für Upload auswählen und hochladen                       |
+| Messdatei aus Serverdatenbak wählen | Bereits vorhandene Daten auswählen und ggf. herunterladen          |
+| Messdatei transformieren            | Rechenoperationen auf einzelne Spalten ausführen                   |
+| Transformationshistorie             | Die Historie der angewandten Operationen wird hier angezeigt       |
+| Messdatei analysieren               | Zur Analyse können hier ein Diagramm und ein Report erzeugt werden |
+|                                     |                                                                    |
 
 
 ## Klassendiagramm

@@ -1,0 +1,13 @@
+Running 11 test cases...
+
+C:/Users/ua878/OneDrive - efs-auto.com/Schulungen/Modulstudium/Projekt/projektModulstudium/MAP/test/utest.cpp(36): 
+	error: in "utest/check_metadaten_3": check csv.metadata[1] == ("") has failed
+Test schlaegt fehl, weil der Code die fehlende Format-Endung nicht abfangen kann. Als Endung wird das hier erzeugt: /db/weekly
+
+C:/Users/ua878/OneDrive - efs-auto.com/Schulungen/Modulstudium/Projekt/projektModulstudium/MAP/test/utest.cpp(46): 
+	error: in "utest/check_metadaten_4": check csv.metadata[1] == ("") has failed
+Test schlaegt fehl, weil der Code die fehlende Format-Endung nicht abfangen kann. Als Endung wird das hier erzeugt: /db/
+
+C:/Users/ua878/OneDrive - efs-auto.com/Schulungen/Modulstudium/Projekt/projektModulstudium/MAP/test/utest.cpp(112): 
+	error: in "utest/check_csv_read_7": check csv.columns[0].values.size() == 573 + 0 has failed
+Test schlaegt fehl, weil Anzahl Zeilen nicht 573 ist, sondern: 582

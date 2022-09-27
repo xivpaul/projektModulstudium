@@ -36,16 +36,19 @@
         <TestCase id="c74" name="Testcase 4 / 1 Zeile, 1 Spalte">
             <Marks true="c26 c41 c59 "/>
         </TestCase>
-        <TestCase id="c77" name="Testcase 5 / viele Zeilen, viele Spalten">
-            <Marks true="c32 c47 c59 "/>
+        <TestCase id="c170" name="Testcase 5 / 1 Mio Zeilen">
+            <Marks true="c32 c41 c59 "/>
         </TestCase>
-        <TestCase id="c80" name="Testcase 6 / Spalten-Namen nicht vorhanden">
+        <TestCase id="c77" name="Testcase 6 / 10000 Spalten">
+            <Marks true="c26 c47 c59 "/>
+        </TestCase>
+        <TestCase id="c80" name="Testcase 7 / Spalten-Namen nicht vorhanden">
             <Marks true="c29 c44 c50 "/>
         </TestCase>
-        <TestCase id="c83" name="Testcase 7 / zu wenig Spalten">
+        <TestCase id="c83" name="Testcase 8 / zu wenig Spalten-Namen">
             <Marks true="c29 c44 c53 "/>
         </TestCase>
-        <TestCase id="c86" name="Testcase 8 / zu viele Spalten">
+        <TestCase id="c86" name="Testcase 9 / zu viele Spalten-Namen">
             <Marks true="c29 c44 c56 "/>
         </TestCase>
     </TestGroup>
